@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife — Daily Activity Monitoring</title>
+  <meta name="description" content="Log your daily step counts, water intake, sleep durations, and active minutes, and view your trends over the week." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <style>
+    .activity-layout {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 24px;
+    }
+    .quick-log-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 1024px) {
+      .activity-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+  
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo">
+        <div class="logo-icon">💪</div>
+        <span>Fit<span class="text-accent">Life</span></span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Fitness Core</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="workouts.html" class="nav-item">
+        <span class="nav-icon">💪</span>
+        <span>Workouts & AI</span>
+      </a>
+      <a href="nutrition.html" class="nav-item">
+        <span class="nav-icon">🍎</span>
+        <span>Nutrition Logs</span>
+      </a>
+      <a href="progress.html" class="nav-item">
+        <span class="nav-icon">📈</span>
+        <span>Progress Reports</span>
+      </a>
+      
+      <div class="sidebar-section-label">My Wellness</div>
+      <a href="goals.html" class="nav-item">
+        <span class="nav-icon">🎯</span>
+        <span>Fitness Goals</span>
+      </a>
+      <a href="activity.html" class="nav-item active">
+        <span class="nav-icon">🏃</span>
+        <span>Daily Activity</span>
+      </a>
+      <a href="achievements.html" class="nav-item">
+        <span class="nav-icon">🏆</span>
+        <span>Achievements</span>
+      </a>
+      
+      <div class="sidebar-section-label">Account</div>
+      <a href="profile.html" class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span>Profile & Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-mini" onclick="window.location.href='profile.html'">
+        <div class="user-avatar">AK</div>
+        <div class="user-mini-info">
+          <div class="user-mini-name">Alex Kumar</div>
+          <div class="user-mini-role">Member</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
+      <div class="topbar-left">
+        <h1 class="topbar-title">Daily Activity Monitoring</h1>
+        <p class="topbar-subtitle">Log physical movements, check hydration, and track your sleep pattern.</p>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle icon-btn" title="Toggle Theme">🌙</button>
+        <button class="icon-btn" onclick="showToast('Your daily steps are logged!', 'success')">
+          🏃
+        </button>
+        <div class="topbar-avatar" onclick="window.location.href='profile.html'">AK</div>
+      </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      
+      <div class="activity-layout">
+        
+        <!-- Left Side: Steps History Chart + Table Logs -->
+        <div>
+          <!-- Steps bar chart -->
+          <div class="chart-card mb-24">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">Steps Walked (Weekly History)</h3>
+                <p class="chart-subtitle">Daily step counts with reference color indicators (Green: Target met, Yellow: Average, Red: Low)</p>
+              </div>
+            </div>
+            <div style="position: relative; height: 260px;">
+              <canvas id="stepsChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Activity log records -->
+          <div class="card">
+            <h3 class="chart-title mb-16">Activity Log History</h3>
+            <div style="overflow-x:auto;">
+              <table class="data-table" id="activityTable">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Steps Walked</th>
+                    <th>Water Cups</th>
+                    <th>Sleep Hours</th>
+                    <th>Active Minutes</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Today, June 14</td>
+                    <td><span id="t-steps">7,200</span> steps</td>
+                    <td><span id="t-water">4</span> cups</td>
+                    <td><span id="t-sleep">6.0</span> hrs</td>
+                    <td><span id="t-active">78</span> mins</td>
+                    <td>—</td>
+                  </tr>
+                  <tr>
+                    <td>Yesterday, June 13</td>
+                    <td>11,200 steps</td>
+                    <td>7 cups</td>
+                    <td>7.5 hrs</td>
+                    <td>90 mins</td>
+                    <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteActivity(this)">Delete</button></td>
+                  </tr>
+                  <tr>
+                    <td>Friday, June 12</td>
+                    <td>8,600 steps</td>
+                    <td>6 cups</td>
+                    <td>8.0 hrs</td>
+                    <td>50 mins</td>
+                    <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteActivity(this)">Delete</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Log Form -->
+        <div>
+          <div class="card">
+            <h3 class="chart-title mb-16">Log Daily Metrics</h3>
+            <p class="text-secondary mb-16" style="font-size:0.82rem;">Update metrics for today's logs.</p>
+            
+            <form id="activityForm" style="display:flex;flex-direction:column;gap:16px;">
+              <div class="quick-log-grid">
+                <div class="form-group">
+                  <label class="form-label" for="actSteps">Steps Walked</label>
+                  <input type="number" id="actSteps" class="form-input" placeholder="e.g. 8000" min="0" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="actWater">Water Consumed (Cups)</label>
+                  <input type="number" id="actWater" class="form-input" placeholder="e.g. 5" min="0" required />
+                </div>
+              </div>
+
+              <div class="quick-log-grid">
+                <div class="form-group">
+                  <label class="form-label" for="actSleep">Sleep Duration (hrs)</label>
+                  <input type="number" id="actSleep" class="form-input" placeholder="e.g. 7" min="0" step="0.5" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="actActive">Active Minutes</label>
+                  <input type="number" id="actActive" class="form-input" placeholder="e.g. 45" min="0" required />
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="justify-content:center;">Log Metrics ✓</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../js/auth-protection.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/dashboard.js"></script>
+<script>
+  AuthProtection.requireLogin();
+</script>
+<script>
+  // Setup activity form submission
+  const activityForm = document.getElementById('activityForm');
+  
+  activityForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const steps = parseInt(document.getElementById('actSteps').value);
+    const water = parseInt(document.getElementById('actWater').value);
+    const sleep = parseFloat(document.getElementById('actSleep').value).toFixed(1);
+    const active = parseInt(document.getElementById('actActive').value);
+
+    // Update today's display row
+    document.getElementById('t-steps').textContent = steps.toLocaleString();
+    document.getElementById('t-water').textContent = water;
+    document.getElementById('t-sleep').textContent = sleep;
+    document.getElementById('t-active').textContent = active;
+
+    // Trigger toast
+    showToast('Today\'s activity logs updated successfully! 🏃');
+    activityForm.reset();
+  });
+
+  function deleteActivity(btn) {
+    btn.closest('tr').remove();
+    showToast('Activity log deleted', 'info');
+  }
+</script>
+</body>
+</html>

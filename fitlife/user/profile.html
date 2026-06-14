@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife — Profile & Settings</title>
+  <meta name="description" content="Manage your personal details, update fitness attributes, check subscription tier, and configure account security." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <style>
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 24px;
+    }
+    .profile-card-center {
+      text-align: center;
+      padding: 32px 20px;
+    }
+    .profile-large-avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-teal));
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      border: 3px solid var(--border-accent);
+      box-shadow: var(--shadow-accent);
+    }
+    .profile-name {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+    .profile-email {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .form-switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-switch-row:last-child {
+      border-bottom: none;
+    }
+    @media (max-width: 1024px) {
+      .profile-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+  
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo">
+        <div class="logo-icon">💪</div>
+        <span>Fit<span class="text-accent">Life</span></span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Fitness Core</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="workouts.html" class="nav-item">
+        <span class="nav-icon">💪</span>
+        <span>Workouts & AI</span>
+      </a>
+      <a href="nutrition.html" class="nav-item">
+        <span class="nav-icon">🍎</span>
+        <span>Nutrition Logs</span>
+      </a>
+      <a href="progress.html" class="nav-item">
+        <span class="nav-icon">📈</span>
+        <span>Progress Reports</span>
+      </a>
+      
+      <div class="sidebar-section-label">My Wellness</div>
+      <a href="goals.html" class="nav-item">
+        <span class="nav-icon">🎯</span>
+        <span>Fitness Goals</span>
+      </a>
+      <a href="activity.html" class="nav-item">
+        <span class="nav-icon">🏃</span>
+        <span>Daily Activity</span>
+      </a>
+      <a href="achievements.html" class="nav-item">
+        <span class="nav-icon">🏆</span>
+        <span>Achievements</span>
+      </a>
+      
+      <div class="sidebar-section-label">Account</div>
+      <a href="profile.html" class="nav-item active">
+        <span class="nav-icon">👤</span>
+        <span>Profile & Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-mini">
+        <div class="user-avatar">AK</div>
+        <div class="user-mini-info">
+          <div class="user-mini-name">Alex Kumar</div>
+          <div class="user-mini-role">Member</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
+      <div class="topbar-left">
+        <h1 class="topbar-title">Profile & Settings</h1>
+        <p class="topbar-subtitle">Maintain your parameters, security credentials, and app options.</p>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle icon-btn" title="Toggle Theme">🌙</button>
+        <button class="icon-btn" onclick="showToast('Your settings are loaded', 'info')">
+          👤
+        </button>
+        <div class="topbar-avatar">AK</div>
+      </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      
+      <div class="profile-layout">
+        
+        <!-- Left Side: Mini profile card & Settings links -->
+        <div>
+          <div class="card profile-card-center mb-24">
+            <div class="profile-large-avatar">AK</div>
+            <div class="profile-name" id="profileCardName">Alex Kumar</div>
+            <div class="profile-email">alex.kumar@example.com</div>
+            <span class="badge badge-green">Premium Gold Member</span>
+            
+            <div style="margin-top:24px;border-top:1px solid var(--border);padding-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div>
+                <div style="font-size:1.1rem;font-weight:700;" id="profileCardHeight">180 cm</div>
+                <div style="font-size:0.75rem;color:var(--text-muted);">Height</div>
+              </div>
+              <div>
+                <div style="font-size:1.1rem;font-weight:700;" id="profileCardWeight">80.8 kg</div>
+                <div style="font-size:0.75rem;color:var(--text-muted);">Weight</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="chart-title mb-16">Notification Alerts</h3>
+            <div class="form-switch-row">
+              <div>
+                <div style="font-size:0.85rem;font-weight:600;">Email Notifications</div>
+                <div style="font-size:0.7rem;color:var(--text-muted);">Receive weekly progress reports</div>
+              </div>
+              <input type="checkbox" checked style="accent-color:var(--accent);width:18px;height:18px;" />
+            </div>
+            <div class="form-switch-row">
+              <div>
+                <div style="font-size:0.85rem;font-weight:600;">Coach Aura Reminders</div>
+                <div style="font-size:0.7rem;color:var(--text-muted);">Receive prompts from your AI coach</div>
+              </div>
+              <input type="checkbox" checked style="accent-color:var(--accent);width:18px;height:18px;" />
+            </div>
+            <div class="form-switch-row">
+              <div>
+                <div style="font-size:0.85rem;font-weight:600;">Marketing Digests</div>
+                <div style="font-size:0.7rem;color:var(--text-muted);">Receive periodic offers</div>
+              </div>
+              <input type="checkbox" style="accent-color:var(--accent);width:18px;height:18px;" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Forms -->
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <!-- Personal Details Form -->
+          <div class="card">
+            <h3 class="chart-title mb-16">Update Personal Information</h3>
+            <form id="infoForm" style="display:flex;flex-direction:column;gap:16px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div class="form-group">
+                  <label class="form-label" for="profName">Full Name</label>
+                  <input type="text" id="profName" class="form-input" value="Alex Kumar" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="profEmail">Email Address</label>
+                  <input type="email" id="profEmail" class="form-input" value="alex.kumar@example.com" required />
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div class="form-group">
+                  <label class="form-label" for="profHeight">Height (cm)</label>
+                  <input type="number" id="profHeight" class="form-input" value="180" min="50" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="profWeight">Weight (kg)</label>
+                  <input type="number" id="profWeight" class="form-input" value="80.8" step="0.1" min="10" required />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="profDob">Date of Birth</label>
+                <input type="date" id="profDob" class="form-input" value="1995-05-15" required />
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="justify-content:center;margin-top:8px;">Save Settings ✓</button>
+            </form>
+          </div>
+
+          <!-- Account Security Form -->
+          <div class="card">
+            <h3 class="chart-title mb-16">Change Security Credentials</h3>
+            <form id="securityForm" style="display:flex;flex-direction:column;gap:16px;">
+              <div class="form-group">
+                <label class="form-label" for="secCurrent">Current Password</label>
+                <input type="password" id="secCurrent" class="form-input" placeholder="••••••••" required />
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div class="form-group">
+                  <label class="form-label" for="secNew">New Password</label>
+                  <input type="password" id="secNew" class="form-input" placeholder="Min 8 characters" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="secConfirm">Confirm New Password</label>
+                  <input type="password" id="secConfirm" class="form-input" placeholder="••••••••" required />
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-ghost" style="justify-content:center;border-color:var(--border-accent);color:var(--accent);background:var(--accent-glow);">Update Password ✓</button>
+            </form>
+          </div>
+
+          <!-- Logout Button -->
+          <div style="text-align:right;">
+            <button class="btn btn-danger" data-action="logout" style="cursor:pointer;">Log Out Session ➔</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/auth-protection.js"></script>
+<script src="../js/main.js"></script>
+<script>
+  AuthProtection.requireLogin();
+  // Setup Form Handlers
+  const infoForm = document.getElementById('infoForm');
+  infoForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Update local variables & displays
+    const name = document.getElementById('profName').value;
+    const height = document.getElementById('profHeight').value;
+    const weight = document.getElementById('profWeight').value;
+
+    document.getElementById('profileCardName').textContent = name;
+    document.getElementById('profileCardHeight').textContent = height + ' cm';
+    document.getElementById('profileCardWeight').textContent = weight + ' kg';
+
+    showToast('Personal info updated successfully! 👤');
+  });
+
+  const securityForm = document.getElementById('securityForm');
+  securityForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const newPw = document.getElementById('secNew').value;
+    const confirm = document.getElementById('secConfirm').value;
+
+    if (newPw.length < 8) {
+      showToast('Password must be at least 8 characters long!', 'error');
+      return;
+    }
+    if (newPw !== confirm) {
+      showToast('New passwords do not match!', 'error');
+      return;
+    }
+
+    showToast('Password changed successfully! 🔐');
+    securityForm.reset();
+  });
+</script>
+</body>
+</html>

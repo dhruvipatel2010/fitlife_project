@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife Auth Test</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body {
+      padding: 40px;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    .test-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .test-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .test-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    .status-ok {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+    .status-error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid #ef4444;
+      color: #ef4444;
+    }
+    .status-icon {
+      font-size: 1.2rem;
+    }
+    .test-button {
+      padding: 10px 16px;
+      margin: 8px 4px 8px 0;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-test {
+      background: var(--accent);
+      color: #000;
+    }
+    .btn-test:hover {
+      opacity: 0.9;
+    }
+    .output {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-top: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+<div class="test-container">
+  <h1>🧪 FitLife Authentication Test</h1>
+  
+  <div class="test-box">
+    <h2>Current Authentication Status</h2>
+    <div id="authStatus"></div>
+  </div>
+
+  <div class="test-box">
+    <h2>Test Login</h2>
+    <p>Fill in credentials to test the login flow:</p>
+    <div style="margin: 16px 0;">
+      <input type="email" id="testEmail" placeholder="Email (e.g., test@example.com)" style="width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 4px;">
+      <select id="testRole" style="width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 4px;">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <button class="test-button btn-test" onclick="simulateLogin()">🔐 Simulate Login</button>
+    <button class="test-button btn-test" onclick="clearLogin()">🚪 Clear Login Data</button>
+    <div class="output" id="testOutput"></div>
+  </div>
+
+  <div class="test-box">
+    <h2>Test Feature Access</h2>
+    <p>Click a link to test if authentication redirects work:</p>
+    <div style="margin: 16px 0;">
+      <a href="user/dashboard.html" class="test-button btn-test" style="display: inline-block; text-decoration: none; color: inherit;">📊 Dashboard</a>
+      <a href="user/workouts.html" class="test-button btn-test" style="display: inline-block; text-decoration: none; color: inherit;">💪 Workouts</a>
+      <a href="user/nutrition.html" class="test-button btn-test" style="display: inline-block; text-decoration: none; color: inherit;">🍎 Nutrition</a>
+      <a href="admin/dashboard.html" class="test-button btn-test" style="display: inline-block; text-decoration: none; color: inherit;">⚙️ Admin</a>
+    </div>
+    <p style="font-size: 0.9rem; color: var(--text-muted);">
+      ✓ If NOT logged in → Should redirect to login page<br>
+      ✓ If logged in → Should show the page<br>
+      ✓ Check browser console for debug logs
+    </p>
+  </div>
+
+  <div class="test-box">
+    <h2>Debug Info</h2>
+    <button class="test-button btn-test" onclick="showDebugInfo()">📋 Show Debug Info</button>
+    <div class="output" id="debugInfo"></div>
+  </div>
+</div>
+
+<script src="js/auth-protection.js"></script>
+<script>
+  function updateAuthStatus() {
+    const statusDiv = document.getElementById('authStatus');
+    const isLoggedIn = AuthProtection.isLoggedIn();
+    const user = AuthProtection.getUser();
+    
+    if (isLoggedIn) {
+      statusDiv.innerHTML = `
+        <div class="test-status status-ok">
+          <span class="status-icon">✓</span>
+          <span><strong>Logged In</strong> - ${user.email} (${user.role})</span>
+        </div>
+      `;
+    } else {
+      statusDiv.innerHTML = `
+        <div class="test-status status-error">
+          <span class="status-icon">✗</span>
+          <span><strong>Not Logged In</strong> - Login required to access features</span>
+        </div>
+      `;
+    }
+  }
+
+  function simulateLogin() {
+    const email = document.getElementById('testEmail').value.trim();
+    const role = document.getElementById('testRole').value;
+    const output = document.getElementById('testOutput');
+    
+    if (!email) {
+      output.textContent = '❌ Error: Email is required';
+      return;
+    }
+    
+    localStorage.setItem('fitlife-user-email', email);
+    localStorage.setItem('fitlife-user-name', email.split('@')[0]);
+    localStorage.setItem('fitlife-user-role', role);
+    
+    output.textContent = `✓ Login successful!\n\nStored data:\n- Email: ${email}\n- Name: ${email.split('@')[0]}\n- Role: ${role}\n\nNow try clicking the feature links above.`;
+    updateAuthStatus();
+  }
+
+  function clearLogin() {
+    localStorage.removeItem('fitlife-user-email');
+    localStorage.removeItem('fitlife-user-name');
+    localStorage.removeItem('fitlife-user-role');
+    
+    document.getElementById('testOutput').textContent = '✓ Login data cleared!\n\nYou are now logged out.';
+    updateAuthStatus();
+  }
+
+  function showDebugInfo() {
+    const debugDiv = document.getElementById('debugInfo');
+    const info = {
+      'localStorage.fitlife-user-name': localStorage.getItem('fitlife-user-name'),
+      'localStorage.fitlife-user-email': localStorage.getItem('fitlife-user-email'),
+      'localStorage.fitlife-user-role': localStorage.getItem('fitlife-user-role'),
+      'AuthProtection.isLoggedIn()': AuthProtection.isLoggedIn(),
+      'AuthProtection.getUser()': JSON.stringify(AuthProtection.getUser()),
+      'Current URL': window.location.href,
+    };
+    
+    debugDiv.textContent = JSON.stringify(info, null, 2);
+  }
+
+  // Initialize on page load
+  updateAuthStatus();
+  console.log('[Test Page] Loaded auth-protection.js');
+  console.log('[Test Page] AuthProtection object:', AuthProtection);
+</script>
+
+</body>
+</html>

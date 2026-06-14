@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife — Workouts & AI Coach</title>
+  <meta name="description" content="Access custom workout routines, log your weight sessions, and chat with the simulated FitLife AI Fitness Coach." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <style>
+    .workouts-layout {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 24px;
+    }
+    .routine-card {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: var(--transition);
+      margin-bottom: 16px;
+    }
+    .routine-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-accent);
+    }
+    .routine-info {
+      flex: 1;
+    }
+    .routine-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .routine-meta {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .routine-exercises {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .workout-timer-modal-content {
+      text-align: center;
+      padding: 24px 0;
+    }
+    .timer-display {
+      font-size: 3.5rem;
+      font-weight: 900;
+      font-family: monospace;
+      color: var(--accent);
+      margin: 16px 0;
+      letter-spacing: 2px;
+    }
+    .timer-controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+    .workout-logs-container {
+      margin-top: 32px;
+    }
+    .log-form-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 1024px) {
+      .workouts-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 640px) {
+      .log-form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+  
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo">
+        <div class="logo-icon">💪</div>
+        <span>Fit<span class="text-accent">Life</span></span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Fitness Core</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="workouts.html" class="nav-item active">
+        <span class="nav-icon">💪</span>
+        <span>Workouts & AI</span>
+      </a>
+      <a href="nutrition.html" class="nav-item">
+        <span class="nav-icon">🍎</span>
+        <span>Nutrition Logs</span>
+      </a>
+      <a href="progress.html" class="nav-item">
+        <span class="nav-icon">📈</span>
+        <span>Progress Reports</span>
+      </a>
+      
+      <div class="sidebar-section-label">My Wellness</div>
+      <a href="goals.html" class="nav-item">
+        <span class="nav-icon">🎯</span>
+        <span>Fitness Goals</span>
+      </a>
+      <a href="activity.html" class="nav-item">
+        <span class="nav-icon">🏃</span>
+        <span>Daily Activity</span>
+      </a>
+      <a href="achievements.html" class="nav-item">
+        <span class="nav-icon">🏆</span>
+        <span>Achievements</span>
+      </a>
+      
+      <div class="sidebar-section-label">Account</div>
+      <a href="profile.html" class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span>Profile & Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-mini" onclick="window.location.href='profile.html'">
+        <div class="user-avatar">AK</div>
+        <div class="user-mini-info">
+          <div class="user-mini-name">Alex Kumar</div>
+          <div class="user-mini-role">Member</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
+      <div class="topbar-left">
+        <h1 class="topbar-title">Workouts & AI Coach</h1>
+        <p class="topbar-subtitle">Build strength, follow fitness routines, and consult the AI coach.</p>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle icon-btn" title="Toggle Theme">🌙</button>
+        <button class="icon-btn" onclick="showToast('Your AI Fitness Coach is online and ready!', 'success')">
+          🤖 <span class="notif-dot" style="background:var(--accent);"></span>
+        </button>
+        <div class="topbar-avatar" onclick="window.location.href='profile.html'">AK</div>
+      </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      
+      <div class="workouts-layout">
+        
+        <!-- Left Side: Routine Cards + Logging -->
+        <div>
+          <h2 class="chart-title mb-16">Recommended Fitness Routines</h2>
+          
+          <div class="routine-card">
+            <div class="kpi-icon green">🔥</div>
+            <div class="routine-info">
+              <div class="routine-title">HIIT Full Body Burn</div>
+              <div class="routine-meta">
+                <span class="badge badge-green">Cardio</span>
+                <span>⏱ 25 Min</span>
+                <span>🔥 300 kcal</span>
+                <span>⭐ Intermediate</span>
+              </div>
+              <div class="routine-exercises">
+                Jumping Jacks (45s), Burpees (30s), Mountain Climbers (45s), Squat Jumps (30s)
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openWorkoutTimer('HIIT Full Body Burn', 1500)">Start →</button>
+          </div>
+
+          <div class="routine-card">
+            <div class="kpi-icon blue">💪</div>
+            <div class="routine-info">
+              <div class="routine-title">Push Day (Chest & Shoulders)</div>
+              <div class="routine-meta">
+                <span class="badge badge-blue">Strength</span>
+                <span>⏱ 45 Min</span>
+                <span>🔥 220 kcal</span>
+                <span>⭐ Beginner</span>
+              </div>
+              <div class="routine-exercises">
+                Flat Barbell Bench Press (3x10), Incline Dumbbell Press (3x12), Overhead Shoulder Press (3x10), Lateral Raises (3x15)
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openWorkoutTimer('Push Day Strength', 2700)">Start →</button>
+          </div>
+
+          <div class="routine-card">
+            <div class="kpi-icon orange">🍗</div>
+            <div class="routine-info">
+              <div class="routine-title">Hypertrophy Legs & Glutes</div>
+              <div class="routine-meta">
+                <span class="badge badge-orange">Power</span>
+                <span>⏱ 50 Min</span>
+                <span>🔥 340 kcal</span>
+                <span>⭐ Advanced</span>
+              </div>
+              <div class="routine-exercises">
+                Goblet Squats (4x12), Romanian Dumbbell Deadlifts (4x10), Lunges (3x20), Calf Raises (4x15)
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openWorkoutTimer('Hypertrophy Legs', 3000)">Start →</button>
+          </div>
+
+          <!-- Workout Log Form -->
+          <div class="card workout-logs-container">
+            <h3 class="chart-title mb-16">Log Weight / Exercise Session</h3>
+            <form id="workoutLogForm" style="display:flex;flex-direction:column;gap:16px;">
+              <div class="log-form-grid">
+                <div class="form-group">
+                  <label class="form-label" for="logExercise">Exercise Name</label>
+                  <input type="text" id="logExercise" class="form-input" placeholder="e.g. Bench Press" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="logSets">Sets</label>
+                  <input type="number" id="logSets" class="form-input" placeholder="e.g. 3" min="1" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="logReps">Reps</label>
+                  <input type="number" id="logReps" class="form-input" placeholder="e.g. 10" min="1" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="logWeight">Weight (kg)</label>
+                  <input type="number" id="logWeight" class="form-input" placeholder="e.g. 60" min="0" step="0.5" required />
+                </div>
+              </div>
+              <button type="submit" class="btn btn-ghost" style="justify-content:center;background:var(--accent-glow);color:var(--accent);border-color:var(--border-accent);">Log Exercise ✓</button>
+            </form>
+
+            <div style="margin-top:24px;">
+              <h4 class="form-label mb-8">Logged Today</h4>
+              <div style="overflow-x:auto;">
+                <table class="data-table" id="workoutLogTable">
+                  <thead>
+                    <tr>
+                      <th>Exercise</th>
+                      <th>Sets</th>
+                      <th>Reps</th>
+                      <th>Weight</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Flat Bench Press</td>
+                      <td>3</td>
+                      <td>10</td>
+                      <td>65 kg</td>
+                      <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteLog(this)">Delete</button></td>
+                    </tr>
+                    <tr>
+                      <td>Incline DB Press</td>
+                      <td>3</td>
+                      <td>12</td>
+                      <td>22 kg</td>
+                      <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteLog(this)">Delete</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: AI Coach Chat -->
+        <div>
+          <h2 class="chart-title mb-16">Personal AI Fitness Coach</h2>
+          <div class="ai-panel">
+            <div class="ai-header">
+              <div class="ai-avatar">🤖</div>
+              <div>
+                <div class="ai-name">Coach Aura</div>
+                <div class="ai-status">Online · AI Coach</div>
+              </div>
+            </div>
+            
+            <div class="ai-messages" id="aiMessages">
+              <div class="ai-msg bot">
+                <div class="ai-bubble">
+                  Hello! I'm <strong>Coach Aura</strong>, your AI health guide. Ask me for workouts, nutrition advice, or motivational tips! Try clicking one of the suggestions below.
+                </div>
+                <div class="ai-msg-time">08:00 AM</div>
+              </div>
+            </div>
+
+            <div class="ai-suggestions">
+              <button class="ai-suggestion">Chest Workout</button>
+              <button class="ai-suggestion">Cardio Routine</button>
+              <button class="ai-suggestion">Post-workout meal</button>
+              <button class="ai-suggestion">How to lose weight</button>
+            </div>
+
+            <div class="ai-input-row">
+              <input type="text" class="ai-input" id="aiInput" placeholder="Ask about fitness or diet..." />
+              <button class="ai-send" id="aiSend" aria-label="Send message">➔</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Workout Timer Modal -->
+<div class="modal-overlay" id="timerModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="timerRoutineTitle">Workout Routine</h3>
+      <button class="modal-close" data-close-modal="timerModal">×</button>
+    </div>
+    <div class="workout-timer-modal-content">
+      <p style="color:var(--text-muted);">Perform each movement with control and focus.</p>
+      <div class="timer-display" id="timerDisplay">00:00</div>
+      <div class="timer-controls">
+        <button class="btn btn-outline" id="timerPlayPauseBtn" onclick="toggleTimer()">Pause</button>
+        <button class="btn btn-ghost" onclick="resetTimer()">Reset</button>
+        <button class="btn btn-primary" onclick="completeWorkout()">Finish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/auth-protection.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/ai-coach.js"></script>
+<script>
+  // Require login for this page
+  AuthProtection.requireLogin();
+
+  // Timer Variable Declarations
+  let timerInterval = null;
+  let remainingSeconds = 0;
+  let timerIsPaused = false;
+
+  function openWorkoutTimer(name, duration) {
+    document.getElementById('timerRoutineTitle').textContent = name;
+    remainingSeconds = duration;
+    timerIsPaused = false;
+    document.getElementById('timerPlayPauseBtn').textContent = 'Pause';
+    updateTimerDisplay();
+    openModal('timerModal');
+    
+    // Clear old timer
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      if (!timerIsPaused) {
+        if (remainingSeconds > 0) {
+          remainingSeconds--;
+          updateTimerDisplay();
+        } else {
+          clearInterval(timerInterval);
+          completeWorkout();
+        }
+      }
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    const mins = Math.floor(remainingSeconds / 60);
+    const secs = remainingSeconds % 60;
+    document.getElementById('timerDisplay').textContent = 
+      `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  function toggleTimer() {
+    timerIsPaused = !timerIsPaused;
+    document.getElementById('timerPlayPauseBtn').textContent = timerIsPaused ? 'Resume' : 'Pause';
+  }
+
+  function resetTimer() {
+    remainingSeconds = 1500; // Reset to 25 mins default or close modal
+    updateTimerDisplay();
+  }
+
+  function completeWorkout() {
+    clearInterval(timerInterval);
+    closeModal('timerModal');
+    showToast('Awesome job! Routine logged in activity. 🔥', 'success');
+  }
+
+  // Workout logging local persistence simulation
+  const logForm = document.getElementById('workoutLogForm');
+  const logTable = document.getElementById('workoutLogTable').querySelector('tbody');
+
+  logForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = document.getElementById('logExercise').value;
+    const sets = document.getElementById('logSets').value;
+    const reps = document.getElementById('logReps').value;
+    const weight = document.getElementById('logWeight').value;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${name}</td>
+      <td>${sets}</td>
+      <td>${reps}</td>
+      <td>${weight} kg</td>
+      <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteLog(this)">Delete</button></td>
+    `;
+    logTable.appendChild(tr);
+
+    logForm.reset();
+    showToast('Exercise log recorded! 🏋️');
+  });
+
+  function deleteLog(btn) {
+    btn.closest('tr').remove();
+    showToast('Log removed', 'info');
+  }
+</script>
+</body>
+</html>

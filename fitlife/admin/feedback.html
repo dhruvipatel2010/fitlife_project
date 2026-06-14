@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife — Feedback Management</title>
+  <meta name="description" content="Review user comments and feedback, file bug reports, answer suggestions, and manage user communications." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <style>
+    .feedback-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .fb-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: var(--transition);
+    }
+    .fb-card:hover {
+      border-color: var(--border-accent);
+      box-shadow: var(--shadow-accent);
+    }
+    .fb-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .fb-sender-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+    }
+    .fb-sender-email {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .fb-message {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      background: var(--bg-input);
+      padding: 12px;
+      border-radius: 8px;
+      flex: 1;
+    }
+    .reply-area {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+    @media (max-width: 1024px) {
+      .feedback-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+  
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo">
+        <div class="logo-icon" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">🛡️</div>
+        <span>Fit<span class="text-accent">Admin</span></span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Management</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Admin Dashboard</span>
+      </a>
+      <a href="users.html" class="nav-item">
+        <span class="nav-icon">👥</span>
+        <span>User Management</span>
+      </a>
+      <a href="reports.html" class="nav-item">
+        <span class="nav-icon">📄</span>
+        <span>Fitness Reports</span>
+      </a>
+      
+      <div class="sidebar-section-label">Communications</div>
+      <a href="notifications.html" class="nav-item">
+        <span class="nav-icon">🔔</span>
+        <span>Reminders & Alerts</span>
+      </a>
+      <a href="feedback.html" class="nav-item active">
+        <span class="nav-icon">💬</span>
+        <span>Feedback Forms</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-mini">
+        <div class="user-avatar" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">AD</div>
+        <div class="user-mini-info">
+          <div class="user-mini-name">Admin User</div>
+          <div class="user-mini-role">Administrator</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
+      <div class="topbar-left">
+        <h1 class="topbar-title">Member Feedback & Tickets</h1>
+        <p class="topbar-subtitle">Review suggestions, resolve bug tickets, and communicate directly with members.</p>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle icon-btn" title="Toggle Theme">🌙</button>
+        <button class="icon-btn" onclick="showToast('Loading latest feedback tickets...', 'info')">
+          💬
+        </button>
+        <div class="topbar-avatar" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">AD</div>
+      </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      
+      <h2 class="chart-title mb-16">Active Feedback Tickets</h2>
+      
+      <div class="feedback-grid">
+        
+        <!-- Feedback Card 1 -->
+        <div class="fb-card">
+          <div class="fb-header">
+            <div>
+              <div class="fb-sender-name">Arjun Kumar</div>
+              <div class="fb-sender-email">arjun.k@example.com</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+              <span class="badge badge-blue">Feature Request</span>
+              <span class="badge badge-orange status-badge" style="background:rgba(249,115,22,0.12);color:var(--accent-orange)">Pending Reply</span>
+            </div>
+          </div>
+          <div class="fb-message">
+            "I would love to see an integration with Apple Health or Google Fit to import steps automatically! Currently, manually logging steps on the daily activity page is slightly tedious."
+          </div>
+          <div class="reply-area">
+            <textarea class="form-input reply-input" style="height:60px;resize:none;font-size:0.8rem;" placeholder="Type administrator reply..."></textarea>
+            <button class="btn btn-primary btn-sm" style="align-self:flex-end;" onclick="sendReply(this)">Send Response ✉️</button>
+          </div>
+        </div>
+
+        <!-- Feedback Card 2 -->
+        <div class="fb-card">
+          <div class="fb-header">
+            <div>
+              <div class="fb-sender-name">Sarah Jenkins</div>
+              <div class="fb-sender-email">sarah.j@example.com</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+              <span class="badge badge-red" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.25);color:var(--accent-red);">Bug Report</span>
+              <span class="badge badge-green status-badge">Responded</span>
+            </div>
+          </div>
+          <div class="fb-message">
+            "The BMI calculator on the progress page gave me an incorrect category display yesterday on my mobile device, but works perfectly on my desktop computer. Please look into this responsive layout bug!"
+          </div>
+          <div style="font-size:0.78rem;border-top:1px solid var(--border);padding-top:12px;">
+            <div style="font-weight:700;color:var(--accent);">Admin Response:</div>
+            <p style="color:var(--text-muted);font-style:italic;margin-top:4px;">"Hello Sarah, thank you for pointing this out. We fixed the calculation and alignment scaling in our CSS layout. Please let us know if it works!"</p>
+          </div>
+        </div>
+
+        <!-- Feedback Card 3 -->
+        <div class="fb-card">
+          <div class="fb-header">
+            <div>
+              <div class="fb-sender-name">Sneha Rao</div>
+              <div class="fb-sender-email">sneha.rao@example.com</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+              <span class="badge badge-purple" style="background:rgba(139,92,246,0.12);color:var(--accent-purple)">General Inquiry</span>
+              <span class="badge badge-orange status-badge" style="background:rgba(249,115,22,0.12);color:var(--accent-orange)">Pending Reply</span>
+            </div>
+          </div>
+          <div class="fb-message">
+            "How does the AI Coach Aura calculate calorie limits? Does it take into account my current BMI or goals?"
+          </div>
+          <div class="reply-area">
+            <textarea class="form-input reply-input" style="height:60px;resize:none;font-size:0.8rem;" placeholder="Type administrator reply..."></textarea>
+            <button class="btn btn-primary btn-sm" style="align-self:flex-end;" onclick="sendReply(this)">Send Response ✉️</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/auth-protection.js"></script>
+<script src="../js/main.js"></script>
+<script>
+  AuthProtection.requireAdmin();
+  
+  function sendReply(btn) {
+    const input = btn.closest('.reply-area').querySelector('.reply-input');
+    const text = input.value.trim();
+
+    if (!text) {
+      showToast('Please type a response before sending.', 'error');
+      return;
+    }
+
+    const card = btn.closest('.fb-card');
+    const badge = card.querySelector('.status-badge');
+
+    // Update status badge to Responded
+    badge.textContent = 'Responded';
+    badge.style.background = 'var(--accent-glow)';
+    badge.style.borderColor = 'var(--border-accent)';
+    badge.style.color = 'var(--accent)';
+
+    // Replace textarea area with response view
+    const replyArea = btn.closest('.reply-area');
+    replyArea.innerHTML = `
+      <div style="font-size:0.78rem;border-top:1px solid var(--border);padding-top:12px;">
+        <div style="font-weight:700;color:var(--accent);">Admin Response:</div>
+        <p style="color:var(--text-muted);font-style:italic;margin-top:4px;">"${text}"</p>
+      </div>
+    `;
+
+    showToast('Reply sent successfully! ✉️');
+  }
+</script>
+</body>
+</html>

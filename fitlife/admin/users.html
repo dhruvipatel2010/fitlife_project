@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife — User Management</title>
+  <meta name="description" content="View list of registered members, search by name or tier, and suspend, delete, or promote accounts." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <style>
+    .filter-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 768px) {
+      .filter-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+  
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo">
+        <div class="logo-icon" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">🛡️</div>
+        <span>Fit<span class="text-accent">Admin</span></span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Management</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Admin Dashboard</span>
+      </a>
+      <a href="users.html" class="nav-item active">
+        <span class="nav-icon">👥</span>
+        <span>User Management</span>
+      </a>
+      <a href="reports.html" class="nav-item">
+        <span class="nav-icon">📄</span>
+        <span>Fitness Reports</span>
+      </a>
+      
+      <div class="sidebar-section-label">Communications</div>
+      <a href="notifications.html" class="nav-item">
+        <span class="nav-icon">🔔</span>
+        <span>Reminders & Alerts</span>
+      </a>
+      <a href="feedback.html" class="nav-item">
+        <span class="nav-icon">💬</span>
+        <span>Feedback Forms</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-mini">
+        <div class="user-avatar" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">AD</div>
+        <div class="user-mini-info">
+          <div class="user-mini-name">Admin User</div>
+          <div class="user-mini-role">Administrator</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
+      <div class="topbar-left">
+        <h1 class="topbar-title">User Account Management</h1>
+        <p class="topbar-subtitle">Review membership database, modify tiers, and manage user statuses.</p>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle icon-btn" title="Toggle Theme">🌙</button>
+        <button class="icon-btn" onclick="showToast('Displaying all active users', 'info')">
+          👥
+        </button>
+        <div class="topbar-avatar" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">AD</div>
+      </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      
+      <div class="card">
+        <h3 class="chart-title mb-16">Registered Member Accounts</h3>
+        
+        <!-- Filter Row -->
+        <div class="filter-row">
+          <div class="search-box" style="display:flex;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="userSearch" placeholder="Search members by name or email..." onkeyup="filterUsers()" />
+          </div>
+          
+          <select id="tierFilter" class="form-select" onchange="filterUsers()">
+            <option value="all">All Tiers</option>
+            <option value="Premium Gold">Premium Gold</option>
+            <option value="Free Tier">Free Tier</option>
+            <option value="Administrator">Administrator</option>
+          </select>
+
+          <select id="statusFilter" class="form-select" onchange="filterUsers()">
+            <option value="all">All Statuses</option>
+            <option value="Active">Active</option>
+            <option value="Suspended">Suspended</option>
+          </select>
+        </div>
+
+        <!-- User Accounts Table -->
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="usersTable">
+            <thead>
+              <tr>
+                <th>Member Details</th>
+                <th>Registered Date</th>
+                <th>Membership Tier</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div style="font-weight:700;">Alex Kumar</div>
+                  <div style="font-size:0.75rem;color:var(--text-muted);">alex.kumar@example.com</div>
+                </td>
+                <td>Jan 12, 2026</td>
+                <td><span class="badge badge-green">Premium Gold</span></td>
+                <td><span class="badge badge-green status-badge">Active</span></td>
+                <td>
+                  <button class="btn btn-ghost btn-sm" onclick="toggleStatus(this)">Suspend</button>
+                  <button class="btn btn-danger btn-sm" onclick="deleteUser(this)">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="font-weight:700;">Sarah Jenkins</div>
+                  <div style="font-size:0.75rem;color:var(--text-muted);">sarah.j@example.com</div>
+                </td>
+                <td>Feb 20, 2026</td>
+                <td><span class="badge badge-blue">Free Tier</span></td>
+                <td><span class="badge badge-green status-badge">Active</span></td>
+                <td>
+                  <button class="btn btn-ghost btn-sm" onclick="toggleStatus(this)">Suspend</button>
+                  <button class="btn btn-danger btn-sm" onclick="deleteUser(this)">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="font-weight:700;">Michael Rose</div>
+                  <div style="font-size:0.75rem;color:var(--text-muted);">m.rose@example.com</div>
+                </td>
+                <td>Mar 05, 2026</td>
+                <td><span class="badge badge-blue">Free Tier</span></td>
+                <td><span class="badge badge-red status-badge" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.25);color:var(--accent-red)">Suspended</span></td>
+                <td>
+                  <button class="btn btn-ghost btn-sm" onclick="toggleStatus(this)">Activate</button>
+                  <button class="btn btn-danger btn-sm" onclick="deleteUser(this)">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="font-weight:700;">Admin User</div>
+                  <div style="font-size:0.75rem;color:var(--text-muted);">admin@fitlife.com</div>
+                </td>
+                <td>Jan 01, 2026</td>
+                <td><span class="badge badge-orange" style="background:rgba(249,115,22,0.12);color:var(--accent-orange);">Administrator</span></td>
+                <td><span class="badge badge-green status-badge">Active</span></td>
+                <td>
+                  <button class="btn btn-ghost btn-sm" disabled style="opacity:0.3;cursor:not-allowed;">Suspend</button>
+                  <button class="btn btn-danger btn-sm" disabled style="opacity:0.3;cursor:not-allowed;">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/auth-protection.js"></script>
+<script src="../js/main.js"></script>
+<script>
+  AuthProtection.requireAdmin();
+  
+  // Filter Table function
+  function filterUsers() {
+    const searchVal = document.getElementById('userSearch').value.toLowerCase();
+    const tierVal = document.getElementById('tierFilter').value;
+    const statusVal = document.getElementById('statusFilter').value;
+    
+    const rows = document.getElementById('usersTable').querySelector('tbody').rows;
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const name = row.cells[0].textContent.toLowerCase();
+      const tier = row.cells[2].textContent;
+      const status = row.cells[3].textContent;
+
+      const matchesSearch = name.includes(searchVal);
+      const matchesTier = (tierVal === 'all' || tier.trim() === tierVal.trim());
+      const matchesStatus = (statusVal === 'all' || status.trim() === statusVal.trim());
+
+      if (matchesSearch && matchesTier && matchesStatus) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    }
+  }
+
+  // Toggle user active / suspended status
+  function toggleStatus(btn) {
+    const row = btn.closest('tr');
+    const statusBadge = row.querySelector('.status-badge');
+    const isCurrentlyActive = statusBadge.textContent.trim() === 'Active';
+
+    if (isCurrentlyActive) {
+      statusBadge.textContent = 'Suspended';
+      statusBadge.style.background = 'rgba(239,68,68,0.1)';
+      statusBadge.style.borderColor = 'rgba(239,68,68,0.25)';
+      statusBadge.style.color = 'var(--accent-red)';
+      btn.textContent = 'Activate';
+      showToast('Account suspended successfully.', 'info');
+    } else {
+      statusBadge.textContent = 'Active';
+      statusBadge.style.background = 'var(--accent-glow)';
+      statusBadge.style.borderColor = 'var(--border-accent)';
+      statusBadge.style.color = 'var(--accent)';
+      btn.textContent = 'Suspend';
+      showToast('Account activated successfully.', 'success');
+    }
+    
+    filterUsers(); // re-filter
+  }
+
+  // Delete User Row
+  function deleteUser(btn) {
+    if (confirm('Are you sure you want to permanently delete this user account?')) {
+      btn.closest('tr').remove();
+      showToast('User deleted from database.', 'error');
+    }
+  }
+</script>
+</body>
+</html>

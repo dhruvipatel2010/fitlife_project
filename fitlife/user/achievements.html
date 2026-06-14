@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife — Achievements & Badges</title>
+  <meta name="description" content="Review your achievements, check unlocked badges, and track your progress toward fitness milestones." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <style>
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .badge-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .badge-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-accent);
+    }
+    .badge-card.locked {
+      opacity: 0.65;
+    }
+    .badge-card.locked::before {
+      content: '🔒 Locked';
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: rgba(0,0,0,0.4);
+      padding: 3px 8px;
+      border-radius: 12px;
+      color: var(--text-muted);
+    }
+    .badge-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      display: inline-block;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+      transition: var(--transition);
+    }
+    .badge-card:hover .badge-icon {
+      transform: scale(1.15) rotate(5deg);
+    }
+    .badge-card.locked .badge-icon {
+      filter: grayscale(1) opacity(0.5);
+    }
+    .badge-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .badge-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 1024px) {
+      .achievements-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 640px) {
+      .achievements-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+  
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo">
+        <div class="logo-icon">💪</div>
+        <span>Fit<span class="text-accent">Life</span></span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Fitness Core</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="workouts.html" class="nav-item">
+        <span class="nav-icon">💪</span>
+        <span>Workouts & AI</span>
+      </a>
+      <a href="nutrition.html" class="nav-item">
+        <span class="nav-icon">🍎</span>
+        <span>Nutrition Logs</span>
+      </a>
+      <a href="progress.html" class="nav-item">
+        <span class="nav-icon">📈</span>
+        <span>Progress Reports</span>
+      </a>
+      
+      <div class="sidebar-section-label">My Wellness</div>
+      <a href="goals.html" class="nav-item">
+        <span class="nav-icon">🎯</span>
+        <span>Fitness Goals</span>
+      </a>
+      <a href="activity.html" class="nav-item">
+        <span class="nav-icon">🏃</span>
+        <span>Daily Activity</span>
+      </a>
+      <a href="achievements.html" class="nav-item active">
+        <span class="nav-icon">🏆</span>
+        <span>Achievements</span>
+      </a>
+      
+      <div class="sidebar-section-label">Account</div>
+      <a href="profile.html" class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span>Profile & Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-mini" onclick="window.location.href='profile.html'">
+        <div class="user-avatar">AK</div>
+        <div class="user-mini-info">
+          <div class="user-mini-name">Alex Kumar</div>
+          <div class="user-mini-role">Member</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
+      <div class="topbar-left">
+        <h1 class="topbar-title">Milestones & Badges</h1>
+        <p class="topbar-subtitle">Earn reward tokens by keeping consistent with your fitness routine.</p>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle icon-btn" title="Toggle Theme">🌙</button>
+        <button class="icon-btn" onclick="showToast('Reviewing achievements! 🏆', 'info')">
+          🏆
+        </button>
+        <div class="topbar-avatar" onclick="window.location.href='profile.html'">AK</div>
+      </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      
+      <!-- Progress indicator to next level -->
+      <div class="card mb-24">
+        <div class="flex-between mb-12">
+          <div>
+            <h3 class="chart-title">FitLife Level Progress</h3>
+            <p class="chart-subtitle">Unlock "Consistent Runner" to advance to Level 4</p>
+          </div>
+          <div style="font-weight:700;font-size:1.1rem;color:var(--accent);">Level 3 <span style="font-size:0.8rem;color:var(--text-muted);"> (62%)</span></div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" data-width="62"></div></div>
+      </div>
+
+      <!-- Badges grid -->
+      <div class="achievements-grid">
+        
+        <!-- Early Bird -->
+        <div class="badge-card" onclick="showToast('Unlocked on May 10: Worked out before 7:00 AM three times!', 'success')">
+          <span class="badge-icon">🌅</span>
+          <h4 class="badge-title">Early Bird</h4>
+          <p class="badge-desc">Completed 3 workout sessions before 7:00 AM.</p>
+          <span class="badge badge-green">Unlocked ✓</span>
+        </div>
+
+        <!-- Hydro God -->
+        <div class="badge-card" onclick="showToast('Unlocked on May 28: Met water target 5 days in a row!', 'success')">
+          <span class="badge-icon">💧</span>
+          <h4 class="badge-title">Hydro God</h4>
+          <p class="badge-desc">Logged 8 cups of water for 5 consecutive days.</p>
+          <span class="badge badge-green">Unlocked ✓</span>
+        </div>
+
+        <!-- Iron Chest -->
+        <div class="badge-card" onclick="showToast('Unlocked on June 02: Logged 100 kg Flat Bench Press session!', 'success')">
+          <span class="badge-icon">💪</span>
+          <h4 class="badge-title">Iron Chest</h4>
+          <p class="badge-desc">Log a Flat Bench Press set of 100 kg weight or higher.</p>
+          <span class="badge badge-green">Unlocked ✓</span>
+        </div>
+
+        <!-- Consistent Runner -->
+        <div class="badge-card locked" onclick="showToast('Locked: Keep completing cardio routines to unlock!', 'info')">
+          <span class="badge-icon">🏃</span>
+          <h4 class="badge-title">Consistent Runner</h4>
+          <p class="badge-desc">Complete 10 Cardio / HIIT routines.</p>
+          <div class="progress-bar mb-12"><div class="progress-fill blue" data-width="80"></div></div>
+          <div class="goal-sub">8 / 10 workouts logged</div>
+        </div>
+
+        <!-- Macro Master -->
+        <div class="badge-card locked" onclick="showToast('Locked: Keep logging meals to hit targets!', 'info')">
+          <span class="badge-icon">🥗</span>
+          <h4 class="badge-title">Macro Master</h4>
+          <p class="badge-desc">Hit exact daily target macronutrients for 5 consecutive days.</p>
+          <div class="progress-bar mb-12"><div class="progress-fill orange" data-width="60"></div></div>
+          <div class="goal-sub">3 / 5 days recorded</div>
+        </div>
+
+        <!-- Legend -->
+        <div class="badge-card locked" onclick="showToast('Locked: Ultimate milestone reward!', 'info')">
+          <span class="badge-icon">👑</span>
+          <h4 class="badge-title">FitLife Legend</h4>
+          <p class="badge-desc">Achieve all active targets and maintain 30 days check-in streak.</p>
+          <span class="badge badge-red" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.25);">Locked</span>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/auth-protection.js"></script>
+<script src="../js/main.js"></script>
+<script>
+  AuthProtection.requireLogin();
+</script>
+</body>
+</html>

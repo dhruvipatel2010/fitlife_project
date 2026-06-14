@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife Demo Dashboard — Try Before You Sign Up</title>
+  <meta name="description" content="Experience FitLife dashboard features. View sample fitness tracking, workout data, and nutrition insights." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <style>
+    .demo-banner {
+      background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(59,130,246,0.1) 100%);
+      border-bottom: 1px solid var(--border-accent);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .demo-banner-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+    .demo-badge {
+      background: var(--accent);
+      color: #000;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+    .demo-cta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .demo-cta button {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .demo-cta .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+    .demo-cta .btn-primary:hover {
+      background: var(--accent-glow);
+    }
+    .demo-cta .btn-secondary {
+      background: var(--bg-input);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    .demo-cta .btn-secondary:hover {
+      background: var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+  
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="index.html" class="sidebar-logo">
+        <div class="logo-icon">💪</div>
+        <span>Fit<span class="text-accent">Life</span></span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Features Demo</div>
+      <a href="demo-dashboard.html" class="nav-item active">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="#features" class="nav-item" onclick="scrollToSection('features')">
+        <span class="nav-icon">💪</span>
+        <span>Workouts & AI</span>
+      </a>
+      <a href="#nutrition" class="nav-item" onclick="scrollToSection('nutrition')">
+        <span class="nav-icon">🍎</span>
+        <span>Nutrition Logs</span>
+      </a>
+      <a href="#progress" class="nav-item" onclick="scrollToSection('progress')">
+        <span class="nav-icon">📈</span>
+        <span>Progress Reports</span>
+      </a>
+      
+      <div class="sidebar-section-label">Get Started</div>
+      <a href="auth.html" class="nav-item" style="color:var(--accent);">
+        <span class="nav-icon">✨</span>
+        <span>Create Account</span>
+      </a>
+      <a href="auth.html" class="nav-item">
+        <span class="nav-icon">🔐</span>
+        <span>Sign In</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div style="padding: 16px; text-align: center; border-top: 1px solid var(--border); font-size: 0.85rem; color: var(--text-muted);">
+        <p>This is a demo dashboard. Create an account to save your data!</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+    
+    <!-- DEMO BANNER -->
+    <div class="demo-banner">
+      <div class="demo-banner-text">
+        <span class="demo-badge">DEMO MODE</span>
+        <span>Viewing sample fitness data. <strong>Create an account to start tracking your own fitness journey!</strong></span>
+      </div>
+      <div class="demo-cta">
+        <button class="btn-secondary" onclick="window.location.href='auth.html'">Sign Up</button>
+        <button class="btn-primary" onclick="window.location.href='auth.html?tab=register'">Get Started Free</button>
+      </div>
+    </div>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
+      <div class="topbar-left">
+        <h1 class="topbar-title">Welcome to FitLife Demo Dashboard 👋</h1>
+        <p class="topbar-subtitle">Explore sample fitness tracking features</p>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search data..." />
+        </div>
+        <button class="theme-toggle icon-btn" title="Toggle Theme">🌙</button>
+        <button class="icon-btn" onclick="showToast('Demo Mode: Notifications disabled', 'info')">
+          🔔
+          <span class="notif-dot"></span>
+        </button>
+        <a href="auth.html" class="icon-btn" title="Sign In" style="background:var(--accent);color:#000;font-weight:600;padding:6px 12px;border-radius:6px;">Sign In</a>
+      </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-icon green">🔥</div>
+            <div class="kpi-change up">↑ 12%</div>
+          </div>
+          <div class="kpi-value" data-target="520" data-suffix=" kcal">0 kcal</div>
+          <div class="kpi-label">Calories Burned Today</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-icon blue">⚡</div>
+            <div class="kpi-change up">↑ 8%</div>
+          </div>
+          <div class="kpi-value" data-target="78" data-suffix=" min">0 min</div>
+          <div class="kpi-label">Active Minutes Today</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-icon orange">🏋️</div>
+            <div class="kpi-change up">Perfect</div>
+          </div>
+          <div class="kpi-value">4 / 6</div>
+          <div class="kpi-label">Weekly Workouts</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-icon purple">📈</div>
+            <div class="kpi-change down">↓ 1.4%</div>
+          </div>
+          <div class="kpi-value">22.4</div>
+          <div class="kpi-label">Current BMI (Normal)</div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3 class="chart-title">Calorie Balance</h3>
+              <p class="chart-subtitle">Calories Burned vs Consumed this week</p>
+            </div>
+            <div class="chart-tabs">
+              <button class="chart-tab active">Weekly</button>
+              <button class="chart-tab" onclick="showToast('Monthly data in your personal account', 'info')">Monthly</button>
+            </div>
+          </div>
+          <div style="position: relative; height: 300px;">
+            <canvas id="calorieChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">Macronutrient Balance</h3>
+            <p class="chart-subtitle">Your daily protein, carbs & fats</p>
+          </div>
+          <div style="position: relative; height: 300px;">
+            <canvas id="macroChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features Section -->
+      <div id="features" class="charts-row" style="margin-top: 32px;">
+        <div class="card">
+          <h3 style="margin-bottom: 16px;">💪 Workout Tracking</h3>
+          <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
+            <li style="display: flex; align-items: center; gap: 8px;"><span style="color:var(--accent);">✓</span> Track 500+ exercise types</li>
+            <li style="display: flex; align-items: center; gap: 8px;"><span style="color:var(--accent);">✓</span> AI coach recommendations</li>
+            <li style="display: flex; align-items: center; gap: 8px;"><span style="color:var(--accent);">✓</span> Auto-detect from wearables</li>
+            <li style="display: flex; align-items: center; gap: 8px;"><span style="color:var(--accent);">✓</span> Form correction with AI</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-bottom: 16px;">🍎 Nutrition Insights</h3>
+          <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
+            <li style="display: flex; align-items: center; gap: 8px;"><span style="color:var(--accent);">✓</span> Food database with 100k+ items</li>
+            <li style="display: flex; align-items: center; gap: 8px;"><span style="color:var(--accent);">✓</span> Barcode scanning</li>
+            <li style="display: flex; align-items: center; gap: 8px;"><span style="color:var(--accent);">✓</span> Personalized meal plans</li>
+            <li style="display: flex; align-items: center; gap: 8px;"><span style="color:var(--accent);">✓</span> Recipe suggestions</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-bottom: 16px;">📈 Progress Analytics</h3>
+          <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px;">
+            <li style="display: flex; align-items: center; gap: 8px;"><span style="color:var(--accent);">✓</span> Weight & body composition tracking</li>
+            <li style="display: flex; align-items: center; gap: 8px;"><span style="color:var(--accent);">✓</span> Performance metrics</li>
+            <li style="display: flex; align-items: center; gap: 8px;"><span style="color:var(--accent);">✓</span> Goal progress visualization</li>
+            <li style="display: flex; align-items: center; gap: 8px;"><span style="color:var(--accent);">✓</span> Trend analysis</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CTA Section -->
+      <div class="card" style="background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(59,130,246,0.1) 100%); border: 1px solid var(--border-accent); text-align: center; padding: 32px; margin-top: 32px;">
+        <h2 style="margin-bottom: 12px;">Ready to Start Your Fitness Journey?</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 24px;">Join millions of users tracking their fitness with FitLife</p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="window.location.href='auth.html?tab=register'">Create Free Account →</button>
+          <button class="btn btn-secondary" onclick="window.location.href='index.html'">Learn More</button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+
+<!-- Main Scripts -->
+<script src="js/auth-protection.js"></script>
+<script src="js/main.js"></script>
+<script>
+  // Require login for demo dashboard
+  AuthProtection.requireLogin();
+</script>
+
+<script>
+function scrollToSection(id) {
+  const element = document.getElementById(id);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+// Sample data for charts
+const calorieCtx = document.getElementById('calorieChart');
+if (calorieCtx) {
+  new Chart(calorieCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      datasets: [
+        {
+          label: 'Burned',
+          data: [450, 520, 490, 580, 510, 620, 550],
+          backgroundColor: 'rgba(34,197,94,0.6)',
+          borderRadius: 8,
+        },
+        {
+          label: 'Consumed',
+          data: [1800, 1950, 1750, 2100, 1900, 2200, 1850],
+          backgroundColor: 'rgba(59,130,246,0.6)',
+          borderRadius: 8,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: 'top' },
+      },
+      scales: {
+        y: { beginAtZero: true },
+      },
+    },
+  });
+}
+
+const macroCtx = document.getElementById('macroChart');
+if (macroCtx) {
+  new Chart(macroCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Protein', 'Carbs', 'Fats'],
+      datasets: [{
+        data: [35, 47, 18],
+        backgroundColor: ['rgba(34,197,94,0.8)', 'rgba(59,130,246,0.8)', 'rgba(249,115,22,0.8)'],
+        borderColor: 'var(--bg-card)',
+        borderWidth: 2,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom' },
+      },
+    },
+  });
+}
+
+// Sidebar toggle
+document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+  document.getElementById('sidebar').classList.toggle('open');
+});
+</script>
+
+</body>
+</html>

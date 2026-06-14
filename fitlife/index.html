@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife — Transform Your Body, Transform Your Life</title>
+  <meta name="description" content="FitLife is your complete fitness and wellness management platform. Track workouts, monitor nutrition, set goals, and achieve the body you want." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      padding-top: 80px;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1400&q=80') center/cover no-repeat;
+      opacity: 0.2;
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(5,10,14,0.95) 50%, rgba(5,10,14,0.7));
+    }
+    .hero-glow {
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(34,197,94,0.12) 0%, transparent 70%);
+      top: -100px; right: -100px;
+      pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 640px; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid var(--border-accent);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 24px;
+      letter-spacing: 0.05em;
+    }
+    .hero-title {
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+    .hero-title .line2 { color: var(--accent); }
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 36px;
+      max-width: 500px;
+    }
+    .hero-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .hero-users {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 40px;
+    }
+    .hero-avatars { display: flex; }
+    .hero-avatars .av {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-primary);
+      margin-left: -10px;
+      background: linear-gradient(135deg, #22c55e, #3b82f6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 700; color: #fff;
+    }
+    .hero-avatars .av:first-child { margin-left: 0; }
+    .hero-users-text { font-size: 0.82rem; color: var(--text-muted); }
+    .hero-users-text strong { color: var(--text-primary); }
+
+    /* Stats Row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 48px;
+    }
+    .stat-box {
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: var(--transition);
+    }
+    .stat-box:hover { border-color: var(--border-accent); transform: translateY(-4px); }
+    .stat-icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .stat-val { font-size: 1.6rem; font-weight: 800; }
+    .stat-key { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .stat-trend {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 0.72rem; font-weight: 600;
+      color: var(--accent); margin-top: 6px;
+    }
+
+    /* Features */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: var(--transition);
+    }
+    .feature-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-accent);
+    }
+    .feature-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+    .feature-icon.g { background: rgba(34,197,94,0.15); }
+    .feature-icon.b { background: rgba(59,130,246,0.15); }
+    .feature-icon.o { background: rgba(249,115,22,0.15); }
+    .feature-icon.p { background: rgba(139,92,246,0.15); }
+    .feature-icon.t { background: rgba(16,185,129,0.15); }
+    .feature-icon.r { background: rgba(239,68,68,0.15); }
+    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.7; }
+
+    /* Dashboard Preview */
+    .preview-section {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .preview-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .preview-text .section-title { font-size: 2.4rem; }
+    .preview-checks { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+    .preview-check { display: flex; align-items: center; gap: 12px; font-size: 0.875rem; color: var(--text-secondary); }
+    .check-dot { width: 20px; height: 20px; border-radius: 50%; background: var(--accent-glow); border: 1px solid var(--border-accent); display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: var(--accent); flex-shrink: 0; }
+    .preview-img {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      background: var(--bg-card);
+    }
+    .mock-dash {
+      padding: 16px;
+      font-size: 0.7rem;
+    }
+    .mock-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .mock-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+    .mock-kpi { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+    .mock-kpi-val { font-size: 1.1rem; font-weight: 800; color: var(--accent); }
+    .mock-kpi-key { color: var(--text-muted); font-size: 0.65rem; margin-top: 2px; }
+    .mock-charts { display: grid; grid-template-columns: 1.5fr 1fr; gap: 8px; }
+    .mock-chart { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+    .mock-chart-title { font-weight: 600; margin-bottom: 8px; }
+    .mock-bars { display: flex; align-items: flex-end; gap: 4px; height: 60px; }
+    .mock-bar { flex: 1; border-radius: 4px 4px 0 0; background: rgba(34,197,94,0.6); }
+    .mock-donut { width: 80px; height: 80px; border-radius: 50%; border: 10px solid var(--accent); border-right-color: #3b82f6; border-bottom-color: #f97316; margin: 0 auto; }
+
+    /* Quote Section */
+    .quote-section {
+      background: linear-gradient(135deg, rgba(34,197,94,0.05), transparent);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .quote-mark { font-size: 5rem; line-height: 1; color: var(--accent); opacity: 0.3; font-family: Georgia, serif; }
+    .quote-text { font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 700; max-width: 640px; margin: 0 auto 16px; }
+    .quote-text em { color: var(--accent); font-style: normal; }
+    .quote-author { font-size: 0.875rem; color: var(--text-muted); }
+
+    /* Bottom Stats Bar */
+    .stats-bar {
+      background: var(--accent);
+      padding: 28px 0;
+    }
+    .stats-bar-inner {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      text-align: center;
+    }
+    .stats-bar-item { color: #000; }
+    .stats-bar-val { font-size: 2rem; font-weight: 900; }
+    .stats-bar-key { font-size: 0.8rem; font-weight: 600; opacity: 0.7; margin-top: 2px; }
+
+    /* Testimonials */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .testimonial-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: var(--transition);
+    }
+    .testimonial-card:hover { border-color: var(--border-accent); transform: translateY(-4px); }
+    .stars { color: #fbbf24; font-size: 0.9rem; margin-bottom: 12px; }
+    .testimonial-text { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+    .ta-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-teal)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: #000; flex-shrink: 0; }
+    .ta-name { font-weight: 700; font-size: 0.9rem; }
+    .ta-role { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* CTA section */
+    .cta-section {
+      text-align: center;
+      background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(16,185,129,0.05));
+      border-top: 1px solid var(--border);
+    }
+    .cta-title { font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; margin-bottom: 16px; }
+    .cta-desc { color: var(--text-muted); max-width: 480px; margin: 0 auto 32px; }
+    .cta-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .preview-inner { grid-template-columns: 1fr; gap: 40px; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .features-grid { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .stats-bar-inner { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ NAVBAR ═══════════ -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <div class="logo-icon">💪</div>
+      <span>Fit<span class="text-accent">Life</span></span>
+    </a>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="user/dashboard.html">Dashboard</a></li>
+      <li><a href="user/workouts.html">Workouts & AI</a></li>
+      <li><a href="user/nutrition.html">Nutrition</a></li>
+      <li><a href="user/progress.html">Progress</a></li>
+      <li><a href="#features">Features</a></li>
+      
+    </ul>
+    <div class="navbar-actions">
+      <a href="auth.html" class="btn btn-ghost btn-sm">Login</a>
+      <a href="auth.html?tab=register" class="btn btn-primary btn-sm">Get Started →</a>
+    </div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-content reveal">
+      <span class="hero-eyebrow">🏆 #1 Fitness & Wellness Platform</span>
+      <h1 class="hero-title">
+        Transform Your Body,<br>
+        <span class="line2">Transform Your Life</span>
+      </h1>
+      <p class="hero-desc">
+        Track workouts, monitor nutrition, achieve goals, and build healthy habits with FitLife — your all-in-one fitness command center.
+      </p>
+      <div class="hero-actions">
+        <a href="auth.html?tab=register" class="btn btn-primary btn-lg">Get Started Free →</a>
+        <a href="demo-dashboard.html" class="btn btn-outline btn-lg">Try Demo Dashboard</a>
+      </div>
+      <div class="hero-users">
+        <div class="hero-avatars">
+          <div class="av">AK</div>
+          <div class="av">MR</div>
+          <div class="av">SJ</div>
+          <div class="av">+</div>
+        </div>
+        <p class="hero-users-text">Join <strong>2M+ users</strong> worldwide achieving their fitness goals</p>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row reveal">
+      <div class="stat-box">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-val"><span data-target="24560" data-suffix="">24,560</span></div>
+        <div class="stat-key">Calories Burned</div>
+        <div class="stat-trend">↑ 12.5% this week</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon">💪</div>
+        <div class="stat-val"><span data-target="128" data-suffix="">128</span></div>
+        <div class="stat-key">Workouts Completed</div>
+        <div class="stat-trend">↑ 8.3% this week</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon">👥</div>
+        <div class="stat-val">2.4M<span style="font-size:1.2rem;color:var(--accent)">+</span></div>
+        <div class="stat-key">Active Users</div>
+        <div class="stat-trend">↑ 15.7% this month</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-val"><span data-target="89" data-suffix="%">89%</span></div>
+        <div class="stat-key">Goals Achieved</div>
+        <div class="stat-trend">↑ 10.2% this week</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FEATURES ═══════════ -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="text-center mb-24 reveal">
+      <span class="section-label">Features</span>
+      <h2 class="section-title">Everything You Need to Succeed</h2>
+      <p class="section-subtitle" style="margin:0 auto;">Powerful tools and features designed to help you on your fitness journey</p>
+    </div>
+    <div class="features-grid reveal">
+      <a href="user/workouts.html" class="feature-card">
+        <div class="feature-icon g">💪</div>
+        <h3>Workout Tracking</h3>
+        <p>Track your workouts, sets, reps, and progress with detailed analytics and insights.</p>
+      </a>
+      <a href="user/nutrition.html" class="feature-card">
+        <div class="feature-icon o">🍎</div>
+        <h3>Nutrition Management</h3>
+        <p>Monitor your nutrition, track macros, and build healthier eating habits effortlessly.</p>
+      </a>
+      <a href="user/goals.html" class="feature-card">
+        <div class="feature-icon b">🎯</div>
+        <h3>Fitness Goal Setting</h3>
+        <p>Set realistic goals, track progress, and stay motivated with smart goal tracking tools.</p>
+      </a>
+      <a href="user/progress.html" class="feature-card">
+        <div class="feature-icon p">📈</div>
+        <h3>Progress Reports</h3>
+        <p>Get detailed reports and visual insights of your progress over time.</p>
+      </a>
+      <a href="user/workouts.html" class="feature-card">
+        <div class="feature-icon t">🤖</div>
+        <h3>AI Coach Support</h3>
+        <p>Get instant personalized support from our advanced AI Coach on demand.</p>
+      </a>
+      <a href="user/activity.html" class="feature-card">
+        <div class="feature-icon r">📊</div>
+        <h3>Daily Activity Monitoring</h3>
+        <p>Monitor your daily activity, steps, sleep, and overall wellness metrics in one place.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ DASHBOARD PREVIEW ═══════════ -->
+<section class="section preview-section">
+  <div class="container">
+    <div class="preview-inner">
+      <div class="preview-text reveal">
+        <span class="section-label">Dashboard Preview</span>
+        <h2 class="section-title">Your Fitness Journey,<br>All in One Place</h2>
+        <p class="section-subtitle">Beautiful dashboards, powerful analytics, and actionable insights to keep you moving forward.</p>
+        <div class="preview-checks">
+          <div class="preview-check"><div class="check-dot">✓</div>Real-time progress tracking</div>
+          <div class="preview-check"><div class="check-dot">✓</div>Advanced analytics & insights</div>
+          <div class="preview-check"><div class="check-dot">✓</div>Calorie & nutrition monitoring</div>
+          <div class="preview-check"><div class="check-dot">✓</div>Workout history & statistics</div>
+          <div class="preview-check"><div class="check-dot">✓</div>BMI & body composition tracking</div>
+        </div>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px;">
+          <a href="demo-dashboard.html" class="btn btn-outline">Try Live Demo</a>
+          <a href="auth.html?tab=register" class="btn btn-primary">Get Started Free →</a>
+        </div>
+      </div>
+      <div class="preview-img reveal">
+        <div class="mock-dash">
+          <div class="mock-topbar">
+            <div style="font-weight:700;font-size:0.9rem;">Good Morning, Alex! 👋</div>
+            <div style="color:var(--text-muted);">May 21, 2026</div>
+          </div>
+          <div class="mock-kpis">
+            <div class="mock-kpi"><div class="mock-kpi-val">1,850</div><div class="mock-kpi-key">Calories</div></div>
+            <div class="mock-kpi"><div class="mock-kpi-val" style="color:#3b82f6;">78</div><div class="mock-kpi-key">Active Min</div></div>
+            <div class="mock-kpi"><div class="mock-kpi-val" style="color:#f97316;">4/6</div><div class="mock-kpi-key">Workouts</div></div>
+            <div class="mock-kpi"><div class="mock-kpi-val" style="color:#8b5cf6;">22.4</div><div class="mock-kpi-key">BMI</div></div>
+          </div>
+          <div class="mock-charts">
+            <div class="mock-chart">
+              <div class="mock-chart-title">Calorie Overview</div>
+              <div class="mock-bars">
+                <div class="mock-bar" style="height:40%;"></div>
+                <div class="mock-bar" style="height:65%;"></div>
+                <div class="mock-bar" style="height:50%;"></div>
+                <div class="mock-bar" style="height:85%;"></div>
+                <div class="mock-bar" style="height:70%;"></div>
+                <div class="mock-bar" style="height:90%;background:rgba(59,130,246,0.6);"></div>
+                <div class="mock-bar" style="height:55%;"></div>
+              </div>
+            </div>
+            <div class="mock-chart">
+              <div class="mock-chart-title">Macronutrients</div>
+              <div class="mock-donut"></div>
+              <div style="display:flex;gap:6px;margin-top:8px;font-size:0.6rem;">
+                <span style="color:var(--accent);">● Protein 35%</span>
+                <span style="color:#3b82f6;">● Carbs 47%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ TESTIMONIALS ═══════════ -->
+<section class="section">
+  <div class="container">
+    <div class="text-center mb-24 reveal">
+      <span class="section-label">Testimonials</span>
+      <h2 class="section-title">What Our Users Say</h2>
+    </div>
+    <div class="testimonials-grid reveal">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"FitLife completely transformed my fitness routine. The workout tracking and nutrition tools are incredibly detailed. Lost 15kg in 4 months!"</p>
+        <div class="testimonial-author">
+          <div class="ta-avatar">AK</div>
+          <div><div class="ta-name">Arjun Kumar</div><div class="ta-role">Lost 15kg in 4 months</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"The dashboard analytics are amazing. I can see exactly how my fitness is improving week by week. Best fitness app I've ever used!"</p>
+        <div class="testimonial-author">
+          <div class="ta-avatar" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);">SR</div>
+          <div><div class="ta-name">Sneha Rao</div><div class="ta-role">Running 5K every week now</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"The trainer assignment feature connected me with an amazing coach. My strength has improved dramatically in just 2 months of using FitLife."</p>
+        <div class="testimonial-author">
+          <div class="ta-avatar" style="background:linear-gradient(135deg,#f97316,#ef4444);">RV</div>
+          <div><div class="ta-name">Rahul Verma</div><div class="ta-role">Gained 8kg muscle mass</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ QUOTE ═══════════ -->
+<section class="section-sm quote-section">
+  <div class="container text-center reveal">
+    <div class="quote-mark">"</div>
+    <p class="quote-text">The only bad workout is the one that <em>didn't happen.</em></p>
+    <p class="quote-author">— Unknown</p>
+  </div>
+</section>
+
+<!-- ═══════════ STATS BAR ═══════════ -->
+<div class="stats-bar">
+  <div class="container">
+    <div class="stats-bar-inner">
+      <div class="stats-bar-item">
+        <div class="stats-bar-val">2M+</div>
+        <div class="stats-bar-key">Happy Users</div>
+      </div>
+      <div class="stats-bar-item">
+        <div class="stats-bar-val">150+</div>
+        <div class="stats-bar-key">Countries</div>
+      </div>
+      <div class="stats-bar-item">
+        <div class="stats-bar-val">10M+</div>
+        <div class="stats-bar-key">Workouts Tracked</div>
+      </div>
+      <div class="stats-bar-item">
+        <div class="stats-bar-val">98%</div>
+        <div class="stats-bar-key">Success Rate</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CTA ═══════════ -->
+<section class="section cta-section">
+  <div class="container reveal">
+    <h2 class="cta-title">Start Your Journey Today</h2>
+    <p class="cta-desc">Join millions of people who have transformed their lives with FitLife. Start free, no credit card required.</p>
+    <div class="cta-actions">
+      <a href="auth.html" class="btn btn-primary btn-lg">Get Started Free →</a>
+      <a href="user/dashboard.html" class="btn btn-outline btn-lg">View Demo Dashboard</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="navbar-logo" style="display:inline-flex;">
+          <div class="logo-icon">💪</div>
+          <span>Fit<span class="text-accent">Life</span></span>
+        </a>
+        <p>Your ultimate fitness and wellness companion. Transform your body, transform your life.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Facebook">f</a>
+          <a href="#" aria-label="Instagram">ig</a>
+          <a href="#" aria-label="Twitter">tw</a>
+          <a href="#" aria-label="YouTube">yt</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="user/dashboard.html">Dashboard</a></li>
+          <li><a href="user/workouts.html">Workouts & AI</a></li>
+          <li><a href="user/nutrition.html">Nutrition</a></li>
+          <li><a href="user/progress.html">Progress</a></li>
+          <li><a href="#">Premium</a></li>
+          <li><a href="#">Mobile App</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div class="footer-newsletter">
+        <h4>Newsletter</h4>
+        <p>Get fitness tips, updates, and motivation delivered to your inbox.</p>
+        <div class="newsletter-form">
+          <input type="email" placeholder="Enter your email" id="newsletterEmail" />
+          <button type="button" onclick="document.getElementById('newsletterEmail').value && showToast('Subscribed! 🎉')">→</button>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 FitLife. All rights reserved.</span>
+      <span>Made with ❤️ for fitness enthusiasts</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

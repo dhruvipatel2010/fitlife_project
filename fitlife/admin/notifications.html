@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife — Reminders & Alerts</title>
+  <meta name="description" content="Send system-wide notifications, schedule reminders, target member tiers, and review broadcast histories." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <style>
+    .notif-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 24px;
+    }
+    @media (max-width: 1024px) {
+      .notif-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+  
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo">
+        <div class="logo-icon" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">🛡️</div>
+        <span>Fit<span class="text-accent">Admin</span></span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Management</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Admin Dashboard</span>
+      </a>
+      <a href="users.html" class="nav-item">
+        <span class="nav-icon">👥</span>
+        <span>User Management</span>
+      </a>
+      <a href="reports.html" class="nav-item">
+        <span class="nav-icon">📄</span>
+        <span>Fitness Reports</span>
+      </a>
+      
+      <div class="sidebar-section-label">Communications</div>
+      <a href="notifications.html" class="nav-item active">
+        <span class="nav-icon">🔔</span>
+        <span>Reminders & Alerts</span>
+      </a>
+      <a href="feedback.html" class="nav-item">
+        <span class="nav-icon">💬</span>
+        <span>Feedback Forms</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-mini">
+        <div class="user-avatar" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">AD</div>
+        <div class="user-mini-info">
+          <div class="user-mini-name">Admin User</div>
+          <div class="user-mini-role">Administrator</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
+      <div class="topbar-left">
+        <h1 class="topbar-title">Reminders & System Alerts</h1>
+        <p class="topbar-subtitle">Broadcast real-time push alerts, configure member reminders, and dispatch notices.</p>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle icon-btn" title="Toggle Theme">🌙</button>
+        <button class="icon-btn" onclick="showToast('Alert dispatcher online.', 'info')">
+          🔔
+        </button>
+        <div class="topbar-avatar" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">AD</div>
+      </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      
+      <div class="notif-layout">
+        
+        <!-- Left Column: Notification Creator -->
+        <div>
+          <div class="card">
+            <h3 class="chart-title mb-16">Broadcast New System Alert</h3>
+            
+            <form id="notifForm" style="display:flex;flex-direction:column;gap:16px;">
+              <div class="form-group">
+                <label class="form-label" for="ntTarget">Target Audience</label>
+                <select id="ntTarget" class="form-select" required>
+                  <option value="All Members">All Registered Members</option>
+                  <option value="Premium Gold Members">Premium Gold Members only</option>
+                  <option value="Free Tier Members">Free Tier Members only</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="ntTitle">Alert Title</label>
+                <input type="text" id="ntTitle" class="form-input" placeholder="e.g. Server Maintenance Notice" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="ntPriority">Priority Status</label>
+                <select id="ntPriority" class="form-select" required>
+                  <option value="Info">Info (Blue)</option>
+                  <option value="Success">Success (Green)</option>
+                  <option value="Warning">Warning (Orange)</option>
+                  <option value="Critical">Critical (Red)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="ntBody">Message Details</label>
+                <textarea id="ntBody" class="form-input" style="height:120px;resize:vertical;" placeholder="Write message summary here..." required></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="justify-content:center;">Dispatch Broadcast Alert 🚀</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right Column: Broadcast History -->
+        <div>
+          <div class="card">
+            <h3 class="chart-title mb-16">Sent Notifications Log</h3>
+            <p class="text-secondary mb-16" style="font-size:0.82rem;">Record of dispatched system-wide announcements.</p>
+            
+            <div style="overflow-x:auto;">
+              <table class="data-table" id="notifTable">
+                <thead>
+                  <tr>
+                    <th>Alert Title</th>
+                    <th>Audience</th>
+                    <th>Priority</th>
+                    <th>Sent At</th>
+                    <th>Recipients</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Weekly Steps Target Met Reminder</td>
+                    <td>Free Tier Members</td>
+                    <td><span class="badge badge-green">Success</span></td>
+                    <td>Today, 10:15 AM</td>
+                    <td>10,240</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="cancelNotif(this)">Delete</button></td>
+                  </tr>
+                  <tr>
+                    <td>System Maintenance Notice (2hr Downtime)</td>
+                    <td>All Members</td>
+                    <td><span class="badge badge-red" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.25);color:var(--accent-red)">Critical</span></td>
+                    <td>June 10, 2026</td>
+                    <td>12,450</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="cancelNotif(this)">Delete</button></td>
+                  </tr>
+                  <tr>
+                    <td>New High Intensity Workouts Added</td>
+                    <td>Premium Gold Members</td>
+                    <td><span class="badge badge-blue">Info</span></td>
+                    <td>June 05, 2026</td>
+                    <td>2,210</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="cancelNotif(this)">Delete</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/auth-protection.js"></script>
+<script src="../js/main.js"></script>
+<script>
+  AuthProtection.requireAdmin();
+  
+  const notifForm = document.getElementById('notifForm');
+  const logTable = document.getElementById('notifTable').querySelector('tbody');
+
+  notifForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const title = document.getElementById('ntTitle').value;
+    const target = document.getElementById('ntTarget').value;
+    const priority = document.getElementById('ntPriority').value;
+    const body = document.getElementById('ntBody').value;
+
+    // Map priority badges
+    let badgeClass = 'badge-blue';
+    let style = '';
+    if (priority === 'Success') badgeClass = 'badge-green';
+    if (priority === 'Warning') {
+      badgeClass = 'badge-orange';
+      style = 'background:rgba(249,115,22,0.12);color:var(--accent-orange);';
+    }
+    if (priority === 'Critical') {
+      badgeClass = 'badge-red';
+      style = 'background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.25);color:var(--accent-red);';
+    }
+
+    const tr = document.createElement('tr');
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const count = target === 'All Members' ? '12,450' : target === 'Premium Gold Members' ? '2,210' : '10,240';
+
+    tr.innerHTML = `
+      <td>${title}</td>
+      <td>${target}</td>
+      <td><span class="badge ${badgeClass}" style="${style}">${priority}</span></td>
+      <td>Today, ${time}</td>
+      <td>${count}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="cancelNotif(this)">Delete</button></td>
+    `;
+    logTable.prepend(tr);
+
+    showToast('Push alert broadcasted successfully! 🚀');
+    notifForm.reset();
+  });
+
+  function cancelNotif(btn) {
+    if (confirm('Permanently remove this notification record from database?')) {
+      btn.closest('tr').remove();
+      showToast('Notification deleted', 'info');
+    }
+  }
+</script>
+</body>
+</html>

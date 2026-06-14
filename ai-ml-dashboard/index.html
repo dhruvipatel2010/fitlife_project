@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualization Results | AI-ML Report</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --bg: #ffffff;
+            --text: #000000;
+            --secondary: #f9fafb;
+            --border: #e5e7eb;
+            --muted: #6b7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4rem 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 5rem;
+        }
+
+        .fig-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--text);
+            padding-bottom: 0.5rem;
+        }
+
+        .fig-description {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .fig-card {
+            background: var(--secondary);
+            border: 1px solid var(--text);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fig-caption {
+            text-align: center;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Confusion Matrix Style */
+        .conf-matrix {
+            display: grid;
+            grid-template-columns: 80px 100px 100px;
+            grid-template-rows: 40px 100px 100px;
+            text-align: center;
+            font-weight: 700;
+            gap: 2px;
+        }
+
+        .cm-label-top { grid-column: 2 / span 2; border-bottom: 1px solid var(--text); padding-bottom: 5px; }
+        .cm-label-left { grid-row: 2 / span 2; writing-mode: vertical-rl; transform: rotate(180deg); border-left: 1px solid var(--text); padding-left: 5px; }
+        .cm-cell { border: 1px solid var(--text); display: flex; flex-direction: column; justify-content: center; background: #fff; }
+        .cm-cell span { font-size: 0.75rem; color: var(--muted); font-weight: normal; }
+
+        /* Heatmap Style */
+        .heatmap {
+            display: grid;
+            grid-template-columns: repeat(5, 50px);
+            grid-template-rows: repeat(5, 50px);
+            gap: 2px;
+            border: 1px solid var(--text);
+        }
+        .heat-cell { background: #eee; width: 100%; height: 100%; border: 1px solid #ddd; }
+
+        canvas {
+            max-width: 100% !important;
+            height: 300px !important;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- 5.3 Confusion Matrix -->
+        <div class="fig-section">
+            <h2>5.3 Confusion Matrix</h2>
+            <p class="fig-description">The confusion matrix shows the performance of the classification model by comparing actual and predicted values.</p>
+            <div class="fig-card">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="margin-left: 80px; margin-bottom: 10px; font-weight: 700;">PREDICTED</div>
+                    <div style="display: flex; align-items: center;">
+                        <div style="writing-mode: vertical-rl; transform: rotate(180deg); font-weight: 700; margin-right: 15px;">ACTUAL</div>
+                        <div class="conf-matrix">
+                            <div></div>
+                            <div style="font-size: 0.8rem;">Pos (1)</div>
+                            <div style="font-size: 0.8rem;">Neg (0)</div>
+                            <div style="font-size: 0.8rem; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px;">Pos (1)</div>
+                            <div class="cm-cell">TP<span>95</span></div>
+                            <div class="cm-cell">FN<span>5</span></div>
+                            <div style="font-size: 0.8rem; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px;">Neg (0)</div>
+                            <div class="cm-cell">FP<span>10</span></div>
+                            <div class="cm-cell">TN<span>890</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fig-caption">Figure 5.1: Confusion Matrix</div>
+            </div>
+        </div>
+
+        <!-- 5.4 ROC Curve -->
+        <div class="fig-section">
+            <h2>5.4 ROC Curve</h2>
+            <p class="fig-description">The ROC curve represents the performance of the classification model by plotting True Positive Rate against False Positive Rate.</p>
+            <div class="fig-card">
+                <canvas id="rocCurve"></canvas>
+                <div class="fig-caption">Figure 5.2: ROC Curve</div>
+            </div>
+        </div>
+
+        <!-- 5.5.1 Pie Chart -->
+        <div class="fig-section">
+            <h2>5.5.1 Pie Chart (Target Distribution)</h2>
+            <p class="fig-description">This chart shows the distribution of the target variable.</p>
+            <div class="fig-card">
+                <canvas id="targetPie"></canvas>
+                <div class="fig-caption">Figure 5.3: Target Distribution</div>
+            </div>
+        </div>
+
+        <!-- 5.5.2 Heatmap -->
+        <div class="fig-section">
+            <h2>5.5.2 Heatmap (Feature Correlation)</h2>
+            <p class="fig-description">This diagram shows the correlation between different features.</p>
+            <div class="fig-card">
+                <div class="heatmap">
+                    <div class="heat-cell" style="background: #000;"></div>
+                    <div class="heat-cell" style="background: #333;"></div>
+                    <div class="heat-cell" style="background: #666;"></div>
+                    <div class="heat-cell" style="background: #999;"></div>
+                    <div class="heat-cell" style="background: #ccc;"></div>
+                    
+                    <div class="heat-cell" style="background: #333;"></div>
+                    <div class="heat-cell" style="background: #000;"></div>
+                    <div class="heat-cell" style="background: #555;"></div>
+                    <div class="heat-cell" style="background: #222;"></div>
+                    <div class="heat-cell" style="background: #888;"></div>
+
+                    <div class="heat-cell" style="background: #666;"></div>
+                    <div class="heat-cell" style="background: #555;"></div>
+                    <div class="heat-cell" style="background: #000;"></div>
+                    <div class="heat-cell" style="background: #bbb;"></div>
+                    <div class="heat-cell" style="background: #444;"></div>
+
+                    <div class="heat-cell" style="background: #999;"></div>
+                    <div class="heat-cell" style="background: #222;"></div>
+                    <div class="heat-cell" style="background: #bbb;"></div>
+                    <div class="heat-cell" style="background: #000;"></div>
+                    <div class="heat-cell" style="background: #ddd;"></div>
+
+                    <div class="heat-cell" style="background: #ccc;"></div>
+                    <div class="heat-cell" style="background: #888;"></div>
+                    <div class="heat-cell" style="background: #444;"></div>
+                    <div class="heat-cell" style="background: #ddd;"></div>
+                    <div class="heat-cell" style="background: #000;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; width: 250px; margin-top: 10px; font-size: 0.7rem;">
+                    <span>Fear_1</span><span>Feat_2</span><span>Feat_3</span><span>Feat_4</span><span>Feat_5</span>
+                </div>
+                <div class="fig-caption">Figure 5.4: Feature Correlation Heatmap</div>
+            </div>
+        </div>
+
+        <!-- 5.5.3 Histogram -->
+        <div class="fig-section">
+            <h2>5.5.3 Histogram (Data Distribution)</h2>
+            <p class="fig-description">This chart shows the distribution of a numerical feature.</p>
+            <div class="fig-card">
+                <canvas id="dataHist"></canvas>
+                <div class="fig-caption">Figure 5.5: Data Distribution Histogram</div>
+            </div>
+        </div>
+
+        <!-- 5.5.4 Bar Chart -->
+        <div class="fig-section">
+            <h2>5.5.4 Bar Chart (Model Comparison)</h2>
+            <p class="fig-description">This chart compares the performance of different models.</p>
+            <div class="fig-card">
+                <canvas id="modelBar"></canvas>
+                <div class="fig-caption">Figure 5.6: Model Comparison Bar Chart</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ROC Curve
+        new Chart(document.getElementById('rocCurve'), {
+            type: 'line',
+            data: {
+                labels: [0, 0.1, 0.2, 0.3, 0.5, 0.8, 1],
+                datasets: [{
+                    label: 'Model ROC',
+                    data: [0, 0.6, 0.8, 0.88, 0.94, 0.98, 1],
+                    borderColor: '#000',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4
+                }, {
+                    label: 'Random Chance',
+                    data: [0, 0.2, 0.4, 0.6, 0.8, 1],
+                    borderColor: '#ccc',
+                    borderDash: [5, 5],
+                    fill: false
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { 
+                    x: { title: { display: true, text: 'False Positive Rate', color: '#000' } },
+                    y: { title: { display: true, text: 'True Positive Rate', color: '#000' }, min: 0, max: 1 }
+                }
+            }
+        });
+
+        // Pie Chart
+        new Chart(document.getElementById('targetPie'), {
+            type: 'pie',
+            data: {
+                labels: ['Class 1 (Yes)', 'Class 0 (No)'],
+                datasets: [{
+                    data: [65, 35],
+                    backgroundColor: ['#000', '#ddd'],
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: { plugins: { legend: { position: 'bottom' } } }
+        });
+
+        // Histogram
+        new Chart(document.getElementById('dataHist'), {
+            type: 'bar',
+            data: {
+                labels: ['10-20', '20-30', '30-40', '40-50', '50-60', '60-70'],
+                datasets: [{
+                    label: 'Frequency',
+                    data: [12, 45, 78, 56, 32, 10],
+                    backgroundColor: '#000'
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { 
+                    x: { title: { display: true, text: 'Feature Values' } },
+                    y: { title: { display: true, text: 'Frequency' } }
+                }
+            }
+        });
+
+        // Model Bar Chart
+        new Chart(document.getElementById('modelBar'), {
+            type: 'bar',
+            data: {
+                labels: ['Logistic Reg', 'Random Forest', 'XGBoost', 'SVM'],
+                datasets: [{
+                    label: 'Accuracy',
+                    data: [0.82, 0.94, 0.91, 0.88],
+                    backgroundColor: ['#333', '#000', '#666', '#999']
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { 
+                    x: { title: { display: true, text: 'Model Names' } },
+                    y: { title: { display: true, text: 'Accuracy / AUC' }, min: 0, max: 1 }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

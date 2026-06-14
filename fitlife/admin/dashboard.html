@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife — Admin Dashboard</title>
+  <meta name="description" content="Access administrator controls, track registered users, monitor system health, and analyze signup growth statistics." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <style>
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 24px;
+    }
+    .system-health {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .health-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .status-dot.orange {
+      background: var(--accent-orange);
+    }
+    @media (max-width: 1024px) {
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+  
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo">
+        <div class="logo-icon" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">🛡️</div>
+        <span>Fit<span class="text-accent">Admin</span></span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Management</div>
+      <a href="dashboard.html" class="nav-item active">
+        <span class="nav-icon">📊</span>
+        <span>Admin Dashboard</span>
+      </a>
+      <a href="users.html" class="nav-item">
+        <span class="nav-icon">👥</span>
+        <span>User Management</span>
+      </a>
+      <a href="reports.html" class="nav-item">
+        <span class="nav-icon">📄</span>
+        <span>Fitness Reports</span>
+      </a>
+      
+      <div class="sidebar-section-label">Communications</div>
+      <a href="notifications.html" class="nav-item">
+        <span class="nav-icon">🔔</span>
+        <span>Reminders & Alerts</span>
+      </a>
+      <a href="feedback.html" class="nav-item">
+        <span class="nav-icon">💬</span>
+        <span>Feedback Forms</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-mini" onclick="showToast('Admin Profile Settings loading...', 'info')">
+        <div class="user-avatar" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">AD</div>
+        <div class="user-mini-info">
+          <div class="user-mini-name">Admin User</div>
+          <div class="user-mini-role">Administrator</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
+      <div class="topbar-left">
+        <h1 class="topbar-title">Administrator Console Dashboard</h1>
+        <p class="topbar-subtitle">Monitor membership metrics, active AI requests, and system analytics.</p>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle icon-btn" title="Toggle Theme">🌙</button>
+        <button class="icon-btn" onclick="showToast('All servers running normally.', 'success')">
+          🔔
+        </button>
+        <div class="topbar-avatar" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">AD</div>
+      </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      
+      <!-- KPI Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-icon green" style="background:var(--accent-glow);color:var(--accent)">👥</div>
+            <div class="kpi-change up">+15%</div>
+          </div>
+          <div class="kpi-value" data-target="12450">0</div>
+          <div class="kpi-label">Registered Members</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-icon blue" style="background:rgba(59,130,246,0.12);color:var(--accent-blue)">🏃</div>
+            <div class="kpi-change up">↑ 22%</div>
+          </div>
+          <div class="kpi-value" data-target="1840">0</div>
+          <div class="kpi-label">Active Users Today</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-icon orange" style="background:rgba(249,115,22,0.12);color:var(--accent-orange)">🤖</div>
+            <div class="kpi-change up">Stable</div>
+          </div>
+          <div class="kpi-value" data-target="4890">0</div>
+          <div class="kpi-label">AI Coach Sessions Logged</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-icon purple" style="background:rgba(139,92,246,0.12);color:var(--accent-purple)">💬</div>
+            <div class="kpi-change down">↓ 4%</div>
+          </div>
+          <div class="kpi-value" data-target="342">0</div>
+          <div class="kpi-label">Feedback Submissions</div>
+        </div>
+      </div>
+
+      <!-- Charts & System Panel -->
+      <div class="admin-layout">
+        
+        <!-- Left Column: User signup chart -->
+        <div>
+          <div class="chart-card mb-24">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">User Signups Growth (7 Days)</h3>
+                <p class="chart-subtitle">Registrations trend analysis</p>
+              </div>
+            </div>
+            <div style="position: relative; height: 260px;">
+              <canvas id="signupChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Quick Action Controls -->
+          <div class="card">
+            <h3 class="chart-title mb-16">Quick Administrative Actions</h3>
+            <div class="flex-between" style="flex-wrap:wrap;gap:12px;">
+              <button class="btn btn-primary btn-sm" onclick="showToast('Database backup completed! 💾', 'success')">💾 Backup Database</button>
+              <button class="btn btn-ghost btn-sm" onclick="window.location.href='notifications.html'">🔔 Broadcast Alert</button>
+              <button class="btn btn-ghost btn-sm" onclick="showToast('Cleared Cache files!', 'success')">🧹 Clear Server Cache</button>
+              <button class="btn btn-danger btn-sm" onclick="showToast('Database is already optimized.', 'info')">⚡ Optimize Queries</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: System Status + Recent Activity -->
+        <div>
+          <!-- System Health -->
+          <div class="card mb-24">
+            <h3 class="chart-title mb-16">System Health Status</h3>
+            <div class="system-health">
+              <div class="health-row">
+                <span style="color:var(--text-secondary);">Database Server</span>
+                <span class="status-indicator"><span class="status-dot"></span><span style="font-weight:600;color:var(--accent)">Online</span></span>
+              </div>
+              <div class="health-row">
+                <span style="color:var(--text-secondary);">AI Engine (Coach Aura)</span>
+                <span class="status-indicator"><span class="status-dot"></span><span style="font-weight:600;color:var(--accent)">Healthy</span></span>
+              </div>
+              <div class="health-row">
+                <span style="color:var(--text-secondary);">Email Server (SMTP)</span>
+                <span class="status-indicator"><span class="status-dot"></span><span style="font-weight:600;color:var(--accent)">Connected</span></span>
+              </div>
+              <div class="health-row">
+                <span style="color:var(--text-secondary);">CDN Services</span>
+                <span class="status-indicator"><span class="status-dot orange"></span><span style="font-weight:600;color:var(--accent-orange)">Slow (90ms)</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Admin Log Activity -->
+          <div class="card">
+            <h3 class="chart-title mb-16">Real-Time Access Logs</h3>
+            <div class="activity-list">
+              <div class="activity-item">
+                <div class="activity-dot green"></div>
+                <div class="activity-info">
+                  <div class="activity-name">Alex Kumar logged in</div>
+                  <div class="activity-time">Just now</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot green"></div>
+                <div class="activity-info">
+                  <div class="activity-name">Sarah Jenkins registered</div>
+                  <div class="activity-time">3 mins ago</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot orange"></div>
+                <div class="activity-info">
+                  <div class="activity-name">Coach Aura processed query</div>
+                  <div class="activity-time">5 mins ago</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot blue"></div>
+                <div class="activity-info">
+                  <div class="activity-name">Feedback #821 answered</div>
+                  <div class="activity-time">12 mins ago</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../js/auth-protection.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/dashboard.js"></script>
+<script>
+  AuthProtection.requireAdmin();
+</script>
+<script>
+  // Initialize Signup Growth Chart
+  document.addEventListener('DOMContentLoaded', () => {
+    const signupCtx = document.getElementById('signupChart');
+    if (signupCtx) {
+      const theme = localStorage.getItem('fitlife-theme') || 'dark';
+      const gridColor = theme === 'light' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
+      const textColor = theme === 'light' ? '#64748b' : '#6b7280';
+
+      new Chart(signupCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'New Users',
+            data: [42, 58, 65, 80, 50, 95, 120],
+            backgroundColor: 'rgba(34,197,94,0.85)',
+            borderRadius: 6,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { grid: { color: gridColor }, ticks: { color: textColor } },
+            x: { grid: { display: false }, ticks: { color: textColor } }
+          }
+        }
+      });
+    }
+  });
+</script>
+</body>
+</html>

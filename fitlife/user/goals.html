@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife — Fitness Goals</title>
+  <meta name="description" content="Manage your long-term fitness and lifestyle targets, add custom goals, and track active completion progress." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <style>
+    .goals-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 24px;
+    }
+    .goal-action-btn {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-glow);
+      border: 1px solid var(--border-accent);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .goal-action-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    @media (max-width: 1024px) {
+      .goals-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+  
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo">
+        <div class="logo-icon">💪</div>
+        <span>Fit<span class="text-accent">Life</span></span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Fitness Core</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="workouts.html" class="nav-item">
+        <span class="nav-icon">💪</span>
+        <span>Workouts & AI</span>
+      </a>
+      <a href="nutrition.html" class="nav-item">
+        <span class="nav-icon">🍎</span>
+        <span>Nutrition Logs</span>
+      </a>
+      <a href="progress.html" class="nav-item">
+        <span class="nav-icon">📈</span>
+        <span>Progress Reports</span>
+      </a>
+      
+      <div class="sidebar-section-label">My Wellness</div>
+      <a href="goals.html" class="nav-item active">
+        <span class="nav-icon">🎯</span>
+        <span>Fitness Goals</span>
+      </a>
+      <a href="activity.html" class="nav-item">
+        <span class="nav-icon">🏃</span>
+        <span>Daily Activity</span>
+      </a>
+      <a href="achievements.html" class="nav-item">
+        <span class="nav-icon">🏆</span>
+        <span>Achievements</span>
+      </a>
+      
+      <div class="sidebar-section-label">Account</div>
+      <a href="profile.html" class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span>Profile & Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-mini" onclick="window.location.href='profile.html'">
+        <div class="user-avatar">AK</div>
+        <div class="user-mini-info">
+          <div class="user-mini-name">Alex Kumar</div>
+          <div class="user-mini-role">Member</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
+      <div class="topbar-left">
+        <h1 class="topbar-title">Fitness Goals Manager</h1>
+        <p class="topbar-subtitle">Establish milestones, update progress, and review historic achievements.</p>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle icon-btn" title="Toggle Theme">🌙</button>
+        <button class="icon-btn" onclick="showToast('You are closer to achieving your weight target! 🎯', 'success')">
+          🎯
+        </button>
+        <div class="topbar-avatar" onclick="window.location.href='profile.html'">AK</div>
+      </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      
+      <div class="goals-grid">
+        
+        <!-- Left Side: Goals List & Creator -->
+        <div>
+          <!-- Goals List Widget -->
+          <div class="card mb-24">
+            <h3 class="chart-title mb-16">Active Goals Track</h3>
+            <p class="text-secondary mb-16" style="font-size:0.82rem;">Monitor and manually log updates below. Click "Increment" to log daily progress.</p>
+            
+            <div class="goal-list" id="activeGoalsList">
+              
+              <!-- Weight Goal -->
+              <div style="border-bottom: 1px solid var(--border); padding-bottom:16px; margin-bottom:12px;">
+                <div class="goal-header">
+                  <span class="goal-name">Lose Weight (Target: 80.0 kg)</span>
+                  <span class="goal-pct" id="g1-pct">89%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="g1-bar" data-width="89"></div></div>
+                <div class="flex-between mt-8">
+                  <span class="goal-sub">Logged: <span id="g1-val">80.8</span> kg · Target: 80.0 kg</span>
+                  <button class="goal-action-btn" onclick="incrementGoal(1, -0.2)">Record -0.2 kg</button>
+                </div>
+              </div>
+
+              <!-- Steps Goal -->
+              <div style="border-bottom: 1px solid var(--border); padding-bottom:16px; margin-bottom:12px;">
+                <div class="goal-header">
+                  <span class="goal-name">Daily Steps Target (Target: 10,000 steps)</span>
+                  <span class="goal-pct" id="g2-pct">72%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill blue" id="g2-bar" data-width="72"></div></div>
+                <div class="flex-between mt-8">
+                  <span class="goal-sub">Logged: <span id="g2-val">7,200</span> / 10,000 steps</span>
+                  <button class="goal-action-btn" onclick="incrementGoal(2, 500)">+500 Steps</button>
+                </div>
+              </div>
+
+              <!-- Water Goal -->
+              <div style="border-bottom: 1px solid var(--border); padding-bottom:16px; margin-bottom:12px;">
+                <div class="goal-header">
+                  <span class="goal-name">Water Cups Hydration (Target: 8 cups)</span>
+                  <span class="goal-pct" id="g3-pct">50%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill orange" id="g3-bar" data-width="50"></div></div>
+                <div class="flex-between mt-8">
+                  <span class="goal-sub">Logged: <span id="g3-val">4</span> / 8 cups</span>
+                  <button class="goal-action-btn" onclick="incrementGoal(3, 1)">+1 Cup</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Completed Goals Table -->
+          <div class="card">
+            <h3 class="chart-title mb-16">Completed Goals History</h3>
+            <div style="overflow-x:auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Goal Target</th>
+                    <th>Type</th>
+                    <th>Result Value</th>
+                    <th>Completed Date</th>
+                    <th>Badge Awarded</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Build Chest Strength</td>
+                    <td>Weight Logs</td>
+                    <td>100 kg Bench Press</td>
+                    <td>June 02, 2026</td>
+                    <td><span class="badge badge-green">💪 Iron Chest</span></td>
+                  </tr>
+                  <tr>
+                    <td>Consistently Hydrated</td>
+                    <td>Hydration</td>
+                    <td>8+ cups daily (10 days)</td>
+                    <td>May 28, 2026</td>
+                    <td><span class="badge badge-blue">💧 Hydro Pro</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Goal Form Creator -->
+        <div>
+          <div class="card">
+            <h3 class="chart-title mb-16">Create New Goal</h3>
+            <form id="newGoalForm" style="display:flex;flex-direction:column;gap:16px;">
+              <div class="form-group">
+                <label class="form-label" for="gTitle">Goal Title / target</label>
+                <input type="text" id="gTitle" class="form-input" placeholder="e.g. Run 10km Marathon" required />
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label" for="gType">Goal Type</label>
+                <select id="gType" class="form-select" required>
+                  <option value="weight">Weight Target (kg)</option>
+                  <option value="steps">Steps Target (Count)</option>
+                  <option value="water">Hydration Target (Cups)</option>
+                  <option value="sleep">Sleep Target (Hours)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="gTargetVal">Target Metric Value</label>
+                <input type="number" id="gTargetVal" class="form-input" placeholder="e.g. 10000" min="1" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="gDeadline">Target Deadline</label>
+                <input type="date" id="gDeadline" class="form-input" required />
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="justify-content:center;">Establish Goal 🎯</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/auth-protection.js"></script>
+<script src="../js/main.js"></script>
+<script>
+  AuthProtection.requireLogin();
+  // Setup deadline default to next week
+  const nextWeek = new Date();
+  nextWeek.setDate(nextWeek.getDate() + 7);
+  const deadlineInput = document.getElementById('gDeadline');
+  if (deadlineInput) {
+    deadlineInput.value = nextWeek.toISOString().split('T')[0];
+  }
+
+  // Handle new goal submission
+  const goalForm = document.getElementById('newGoalForm');
+  const activeList = document.getElementById('activeGoalsList');
+  let goalIdCounter = 3; // Keep tracking
+
+  goalForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const title = document.getElementById('gTitle').value;
+    const type = document.getElementById('gType').value;
+    const targetVal = parseFloat(document.getElementById('gTargetVal').value);
+    
+    goalIdCounter++;
+    const currentId = goalIdCounter;
+    
+    const div = document.createElement('div');
+    div.style.cssText = 'border-bottom: 1px solid var(--border); padding-bottom:16px; margin-bottom:12px;';
+    
+    let defaultProgress = 0;
+    let labelUnit = type === 'weight' ? 'kg' : type === 'steps' ? 'steps' : type === 'water' ? 'cups' : 'hours';
+    let progressColor = type === 'steps' ? 'blue' : type === 'water' ? 'orange' : type === 'sleep' ? 'purple' : '';
+
+    div.innerHTML = `
+      <div class="goal-header">
+        <span class="goal-name">${title} (Target: ${targetVal} ${labelUnit})</span>
+        <span class="goal-pct" id="g${currentId}-pct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill ${progressColor}" id="g${currentId}-bar" style="width: 0%"></div></div>
+      <div class="flex-between mt-8">
+        <span class="goal-sub">Logged: <span id="g${currentId}-val">0</span> / ${targetVal} ${labelUnit}</span>
+        <button class="goal-action-btn" onclick="incrementGoal(${currentId}, ${type === 'weight' ? -1 : type === 'water' ? 1 : type === 'steps' ? 1000 : 1})">Record Progress</button>
+      </div>
+    `;
+
+    activeList.appendChild(div);
+    goalForm.reset();
+    showToast('New goal created! 🎯');
+  });
+
+  // Track values for existing goals
+  const goalsData = {
+    1: { val: 80.8, target: 80.0, isDec: true },  // Weight: gets closer by dropping
+    2: { val: 7200, target: 10000, isDec: false },
+    3: { val: 4, target: 8, isDec: false }
+  };
+
+  function incrementGoal(id, amt) {
+    // If not in tracking dictionary yet (created dynamically)
+    if (!goalsData[id]) {
+      const container = document.getElementById(`g${id}-val`).closest('div').querySelector('.goal-header');
+      const targetText = container.querySelector('.goal-name').textContent;
+      const targetMetric = parseFloat(targetText.match(/Target:\s*([\d\.]+)/)[1]);
+      goalsData[id] = { val: 0, target: targetMetric, isDec: amt < 0 };
+    }
+
+    const gd = goalsData[id];
+    gd.val += amt;
+    if (gd.isDec) {
+      if (gd.val < gd.target) gd.val = gd.target;
+    } else {
+      if (gd.val > gd.target) gd.val = gd.target;
+    }
+
+    // Update displays
+    const valText = gd.isDec ? gd.val.toFixed(1) : gd.val.toLocaleString();
+    document.getElementById(`g${id}-val`).textContent = valText;
+
+    // Calculate percentage
+    let pct = 0;
+    if (gd.isDec) {
+      // Weight drop percentage e.g. start from 85 -> 80
+      // simple calculation
+      const startingWeight = 85.0;
+      pct = Math.round(((startingWeight - gd.val) / (startingWeight - gd.target)) * 100);
+    } else {
+      pct = Math.round((gd.val / gd.target) * 100);
+    }
+    pct = Math.min(Math.max(pct, 0), 100);
+
+    document.getElementById(`g${id}-pct`).textContent = pct + '%';
+    document.getElementById(`g${id}-bar`).style.width = pct + '%';
+
+    if (pct === 100) {
+      showToast('Goal achieved! Awesome work! 🎉', 'success');
+    } else {
+      showToast('Goal progress updated! 🎯');
+    }
+  }
+</script>
+</body>
+</html>

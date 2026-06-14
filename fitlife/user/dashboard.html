@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife User Dashboard</title>
+  <meta name="description" content="View your daily fitness KPIs, check calorie consumption and macronutrients, log water intake, and track your active workouts." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+</head>
+<body>
+
+<div class="app-layout">
+  
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo">
+        <div class="logo-icon">💪</div>
+        <span>Fit<span class="text-accent">Life</span></span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Fitness Core</div>
+      <a href="dashboard.html" class="nav-item active">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="workouts.html" class="nav-item">
+        <span class="nav-icon">💪</span>
+        <span>Workouts & AI</span>
+      </a>
+      <a href="nutrition.html" class="nav-item">
+        <span class="nav-icon">🍎</span>
+        <span>Nutrition Logs</span>
+      </a>
+      <a href="progress.html" class="nav-item">
+        <span class="nav-icon">📈</span>
+        <span>Progress Reports</span>
+      </a>
+      
+      <div class="sidebar-section-label">My Wellness</div>
+      <a href="goals.html" class="nav-item">
+        <span class="nav-icon">🎯</span>
+        <span>Fitness Goals</span>
+      </a>
+      <a href="activity.html" class="nav-item">
+        <span class="nav-icon">🏃</span>
+        <span>Daily Activity</span>
+      </a>
+      <a href="achievements.html" class="nav-item">
+        <span class="nav-icon">🏆</span>
+        <span>Achievements</span>
+      </a>
+      
+      <div class="sidebar-section-label">Account</div>
+      <a href="profile.html" class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span>Profile & Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-mini" onclick="window.location.href='profile.html'">
+        <div class="user-avatar">AK</div>
+        <div class="user-mini-info">
+          <div class="user-mini-name">Alex Kumar</div>
+          <div class="user-mini-role">Member</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
+      <div class="topbar-left">
+        <h1 class="topbar-title">Welcome Back, Alex! 👋</h1>
+        <p class="topbar-subtitle">Here's your fitness overview for today.</p>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search data..." />
+        </div>
+        <button class="theme-toggle icon-btn" title="Toggle Theme">🌙</button>
+        <button class="icon-btn" onclick="showToast('You have completed 85% of your steps target! 🚶', 'info')">
+          🔔
+          <span class="notif-dot"></span>
+        </button>
+        <div class="topbar-avatar" onclick="window.location.href='profile.html'">AK</div>
+      </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-icon green">🔥</div>
+            <div class="kpi-change up">↑ 12%</div>
+          </div>
+          <div class="kpi-value" data-target="520" data-suffix=" kcal">0 kcal</div>
+          <div class="kpi-label">Calories Burned Today</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-icon blue">⚡</div>
+            <div class="kpi-change up">↑ 8%</div>
+          </div>
+          <div class="kpi-value" data-target="78" data-suffix=" min">0 min</div>
+          <div class="kpi-label">Active Minutes Today</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-icon orange">🏋️</div>
+            <div class="kpi-change up">Perfect</div>
+          </div>
+          <div class="kpi-value">4 / 6</div>
+          <div class="kpi-label">Weekly Workouts</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-icon purple">📈</div>
+            <div class="kpi-change down">↓ 1.4%</div>
+          </div>
+          <div class="kpi-value">22.4</div>
+          <div class="kpi-label">Current BMI (Normal)</div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3 class="chart-title">Calorie Balance</h3>
+              <p class="chart-subtitle">Calories Burned vs Consumed this week</p>
+            </div>
+            <div class="chart-tabs">
+              <button class="chart-tab active">Weekly</button>
+              <button class="chart-tab" onclick="showToast('Monthly data loading...', 'info')">Monthly</button>
+            </div>
+          </div>
+          <div style="position: relative; height: 300px;">
+            <canvas id="calorieChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3 class="chart-title">Macronutrients</h3>
+              <p class="chart-subtitle">Daily target percentage breakdown</p>
+            </div>
+          </div>
+          <div style="position: relative; height: 260px;">
+            <canvas id="macroChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Widgets Row -->
+      <div class="bottom-row">
+        <!-- Water Tracker (Interactive) -->
+        <div class="card">
+          <div class="flex-between mb-16">
+            <h3 class="chart-title">Water Intake</h3>
+            <span class="badge badge-blue"><span id="waterDisplay">4</span> / 8 Cups</span>
+          </div>
+          <p class="text-secondary" style="font-size:0.8rem;margin-bottom:16px;">Keep yourself hydrated throughout the day.</p>
+          
+          <div id="waterCups" style="display:flex;justify-content:space-between;gap:8px;margin-bottom:24px;">
+            <div class="water-cup filled" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all 0.3s;">💧</div>
+            <div class="water-cup filled" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all 0.3s;">💧</div>
+            <div class="water-cup filled" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all 0.3s;">💧</div>
+            <div class="water-cup filled" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all 0.3s;">💧</div>
+            <div class="water-cup" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;opacity:0.25;transition:all 0.3s;">💧</div>
+            <div class="water-cup" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;opacity:0.25;transition:all 0.3s;">💧</div>
+            <div class="water-cup" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;opacity:0.25;transition:all 0.3s;">💧</div>
+            <div class="water-cup" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;opacity:0.25;transition:all 0.3s;">💧</div>
+          </div>
+          
+          <div class="flex-between">
+            <button class="btn btn-ghost btn-sm water-btn" data-action="remove" style="flex:1;justify-content:center;">- Remove Cup</button>
+            <button class="btn btn-primary btn-sm water-btn" data-action="add" style="flex:1;justify-content:center;margin-left:8px;">+ Add Cup</button>
+          </div>
+        </div>
+
+        <!-- Target Goals -->
+        <div class="card">
+          <h3 class="chart-title mb-16">Active Target Goals</h3>
+          <div class="goal-list">
+            <div>
+              <div class="goal-header">
+                <span class="goal-name">Lose Weight (Goal 80kg)</span>
+                <span class="goal-pct">89%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" data-width="89"></div></div>
+              <div class="goal-sub">Current: 80.8kg · Target: 80.0kg</div>
+            </div>
+            <div>
+              <div class="goal-header">
+                <span class="goal-name">Calorie Burn (Goal 600 kcal)</span>
+                <span class="goal-pct">86%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill orange" data-width="86"></div></div>
+              <div class="goal-sub">Current: 520 kcal · Target: 600 kcal</div>
+            </div>
+            <div>
+              <div class="goal-header">
+                <span class="goal-name">Daily Sleep Target (8 hrs)</span>
+                <span class="goal-pct">75%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill purple" data-width="75"></div></div>
+              <div class="goal-sub">Logged: 6 hrs · Target: 8 hrs</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="card">
+          <h3 class="chart-title mb-16">Recent Activity Logs</h3>
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-dot green"></div>
+              <div class="activity-info">
+                <div class="activity-name">Cardio Workout</div>
+                <div class="activity-time">Today, 08:30 AM</div>
+              </div>
+              <div class="activity-val">+320 kcal</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot orange"></div>
+              <div class="activity-info">
+                <div class="activity-name">Post-workout Shake</div>
+                <div class="activity-time">Today, 09:15 AM</div>
+              </div>
+              <div class="activity-val" style="color:var(--accent-orange)">+280 kcal</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot blue"></div>
+              <div class="activity-info">
+                <div class="activity-name">Logged 4 Cups Water</div>
+                <div class="activity-time">Today, 11:00 AM</div>
+              </div>
+              <div class="activity-val" style="color:var(--accent-blue)">1.0 L</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<style>
+  .water-cup.filled {
+    opacity: 1 !important;
+    background: var(--accent-glow) !important;
+    border-color: var(--accent-blue) !important;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../js/auth-protection.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/dashboard.js"></script>
+<script>
+  // Require login for this page
+  AuthProtection.requireLogin();
+</script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife — Nutrition Management</title>
+  <meta name="description" content="Log your meals, monitor daily calorie consumption and macronutrients, and track your history over time." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <style>
+    .nutrition-layout {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 24px;
+    }
+    .macro-progress-card {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    @media (max-width: 1024px) {
+      .nutrition-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+  
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo">
+        <div class="logo-icon">💪</div>
+        <span>Fit<span class="text-accent">Life</span></span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Fitness Core</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="workouts.html" class="nav-item">
+        <span class="nav-icon">💪</span>
+        <span>Workouts & AI</span>
+      </a>
+      <a href="nutrition.html" class="nav-item active">
+        <span class="nav-icon">🍎</span>
+        <span>Nutrition Logs</span>
+      </a>
+      <a href="progress.html" class="nav-item">
+        <span class="nav-icon">📈</span>
+        <span>Progress Reports</span>
+      </a>
+      
+      <div class="sidebar-section-label">My Wellness</div>
+      <a href="goals.html" class="nav-item">
+        <span class="nav-icon">🎯</span>
+        <span>Fitness Goals</span>
+      </a>
+      <a href="activity.html" class="nav-item">
+        <span class="nav-icon">🏃</span>
+        <span>Daily Activity</span>
+      </a>
+      <a href="achievements.html" class="nav-item">
+        <span class="nav-icon">🏆</span>
+        <span>Achievements</span>
+      </a>
+      
+      <div class="sidebar-section-label">Account</div>
+      <a href="profile.html" class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span>Profile & Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-mini" onclick="window.location.href='profile.html'">
+        <div class="user-avatar">AK</div>
+        <div class="user-mini-info">
+          <div class="user-mini-name">Alex Kumar</div>
+          <div class="user-mini-role">Member</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
+      <div class="topbar-left">
+        <h1 class="topbar-title">Nutrition Logs & Target Macros</h1>
+        <p class="topbar-subtitle">Maintain control of your diet and fuel your body efficiently.</p>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle icon-btn" title="Toggle Theme">🌙</button>
+        <button class="icon-btn" onclick="showToast('Your water level is good today. Keep it up! 💧', 'success')">
+          🍎
+        </button>
+        <div class="topbar-avatar" onclick="window.location.href='profile.html'">AK</div>
+      </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      
+      <div class="nutrition-layout">
+        
+        <!-- Left Column: Chart + Meal Logger -->
+        <div>
+          <!-- Nutrition intake history chart -->
+          <div class="chart-card mb-24">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">Intake History (Past 14 Days)</h3>
+                <p class="chart-subtitle">Daily Calorie Consumption vs Target (2,000 kcal)</p>
+              </div>
+            </div>
+            <div style="position: relative; height: 260px;">
+              <canvas id="nutritionChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Meal Log Form & Table -->
+          <div class="card">
+            <h3 class="chart-title mb-16">Log Meal & Macro Values</h3>
+            <form id="mealForm" style="display:flex;flex-direction:column;gap:16px;">
+              <div style="display:grid;grid-template-columns:1fr 2fr 1fr;gap:12px;flex-wrap:wrap;">
+                <div class="form-group">
+                  <label class="form-label" for="mealType">Meal Type</label>
+                  <select id="mealType" class="form-select" required>
+                    <option value="Breakfast">Breakfast</option>
+                    <option value="Lunch">Lunch</option>
+                    <option value="Dinner">Dinner</option>
+                    <option value="Snack">Snack</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="mealFood">Food Description</label>
+                  <input type="text" id="mealFood" class="form-input" placeholder="e.g. Scrambled eggs + Whole wheat toast" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="mealCal">Calories (kcal)</label>
+                  <input type="number" id="mealCal" class="form-input" placeholder="e.g. 450" min="1" required />
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+                <div class="form-group">
+                  <label class="form-label" for="mealProt">Protein (g)</label>
+                  <input type="number" id="mealProt" class="form-input" placeholder="e.g. 25" min="0" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="mealCarb">Carbs (g)</label>
+                  <input type="number" id="mealCarb" class="form-input" placeholder="e.g. 35" min="0" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="mealFat">Fat (g)</label>
+                  <input type="number" id="mealFat" class="form-input" placeholder="e.g. 12" min="0" required />
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="justify-content:center;">Add Meal Log ✓</button>
+            </form>
+
+            <div style="margin-top:24px;">
+              <h4 class="form-label mb-8">Meals Logged Today</h4>
+              <div style="overflow-x:auto;">
+                <table class="data-table" id="mealTable">
+                  <thead>
+                    <tr>
+                      <th>Meal</th>
+                      <th>Food Item</th>
+                      <th>Calories</th>
+                      <th>P / C / F</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Breakfast</td>
+                      <td>Oatmeal with berries & honey</td>
+                      <td>380 kcal</td>
+                      <td>12g / 65g / 6g</td>
+                      <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteMeal(this)">Delete</button></td>
+                    </tr>
+                    <tr>
+                      <td>Lunch</td>
+                      <td>Grilled chicken breast & quinoa</td>
+                      <td>650 kcal</td>
+                      <td>45g / 55g / 14g</td>
+                      <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteMeal(this)">Delete</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Macro Progress Indicators -->
+        <div>
+          <h2 class="chart-title mb-16">Daily Nutrition Summary</h2>
+          
+          <div class="card mb-24">
+            <h3 class="chart-title mb-16">Calories Counter</h3>
+            <div style="text-align:center;padding:16px 0;">
+              <div style="font-size:2.8rem;font-weight:900;color:var(--accent);" id="consumedVal">1,030</div>
+              <div style="font-size:0.8rem;color:var(--text-muted);">kcal Consumed today</div>
+              <div style="font-size:1.1rem;font-weight:600;margin-top:12px;color:var(--text-secondary);">Target: 2,000 kcal</div>
+              <div class="progress-bar mt-12"><div class="progress-fill" id="calPctBar" data-width="51"></div></div>
+            </div>
+          </div>
+
+          <div class="card macro-progress-card">
+            <h3 class="chart-title">Daily Macronutrients Target</h3>
+            
+            <div>
+              <div class="goal-header">
+                <span class="goal-name">Protein (Target 150g)</span>
+                <span class="goal-pct" id="protPct">38%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" id="protBar" data-width="38"></div></div>
+              <div class="goal-sub"><span id="protVal">57</span>g / 150g logged</div>
+            </div>
+
+            <div>
+              <div class="goal-header">
+                <span class="goal-name">Carbohydrates (Target 250g)</span>
+                <span class="goal-pct" id="carbPct">48%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill blue" id="carbBar" data-width="48"></div></div>
+              <div class="goal-sub"><span id="carbVal">120</span>g / 250g logged</div>
+            </div>
+
+            <div>
+              <div class="goal-header">
+                <span class="goal-name">Healthy Fats (Target 65g)</span>
+                <span class="goal-pct" id="fatPct">30%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill orange" id="fatBar" data-width="30"></div></div>
+              <div class="goal-sub"><span id="fatVal">20</span>g / 65g logged</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../js/auth-protection.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/dashboard.js"></script>
+<script>
+  AuthProtection.requireLogin();
+</script>
+<script>
+  // Meal list simulation & reactive macro totals
+  let consumedCal = 1030;
+  let consumedProt = 57;
+  let consumedCarb = 120;
+  let consumedFat = 20;
+
+  const targetCal = 2000;
+  const targetProt = 150;
+  const targetCarb = 250;
+  const targetFat = 65;
+
+  const mealForm = document.getElementById('mealForm');
+  const mealTable = document.getElementById('mealTable').querySelector('tbody');
+
+  mealForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const type = document.getElementById('mealType').value;
+    const food = document.getElementById('mealFood').value;
+    const cal = parseInt(document.getElementById('mealCal').value);
+    const prot = parseInt(document.getElementById('mealProt').value);
+    const carb = parseInt(document.getElementById('mealCarb').value);
+    const fat = parseInt(document.getElementById('mealFat').value);
+
+    // Add to table
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${type}</td>
+      <td>${food}</td>
+      <td>${cal} kcal</td>
+      <td>${prot}g / ${carb}g / ${fat}g</td>
+      <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteMeal(this, ${cal}, ${prot}, ${carb}, ${fat})">Delete</button></td>
+    `;
+    mealTable.appendChild(tr);
+
+    // Update macros
+    consumedCal += cal;
+    consumedProt += prot;
+    consumedCarb += carb;
+    consumedFat += fat;
+
+    updateMacroDisplay();
+    mealForm.reset();
+    showToast('Meal logged successfully! 🍎');
+  });
+
+  function deleteMeal(btn, cal = 0, prot = 0, carb = 0, fat = 0) {
+    // Deduct
+    if (cal === 0) {
+      // For initial hardcoded rows
+      if (btn.closest('tr').cells[0].textContent === 'Breakfast') {
+        consumedCal -= 380; consumedProt -= 12; consumedCarb -= 65; consumedFat -= 6;
+      } else {
+        consumedCal -= 650; consumedProt -= 45; consumedCarb -= 55; consumedFat -= 14;
+      }
+    } else {
+      consumedCal -= cal;
+      consumedProt -= prot;
+      consumedCarb -= carb;
+      consumedFat -= fat;
+    }
+
+    btn.closest('tr').remove();
+    updateMacroDisplay();
+    showToast('Meal log deleted', 'info');
+  }
+
+  function updateMacroDisplay() {
+    document.getElementById('consumedVal').textContent = consumedCal.toLocaleString();
+    
+    const calPct = Math.min(Math.round((consumedCal / targetCal) * 100), 100);
+    document.getElementById('calPctBar').style.width = calPct + '%';
+    
+    document.getElementById('protVal').textContent = consumedProt;
+    const protPct = Math.min(Math.round((consumedProt / targetProt) * 100), 100);
+    document.getElementById('protPct').textContent = protPct + '%';
+    document.getElementById('protBar').style.width = protPct + '%';
+
+    document.getElementById('carbVal').textContent = consumedCarb;
+    const carbPct = Math.min(Math.round((consumedCarb / targetCarb) * 100), 100);
+    document.getElementById('carbPct').textContent = carbPct + '%';
+    document.getElementById('carbBar').style.width = carbPct + '%';
+
+    document.getElementById('fatVal').textContent = consumedFat;
+    const fatPct = Math.min(Math.round((consumedFat / targetFat) * 100), 100);
+    document.getElementById('fatPct').textContent = fatPct + '%';
+    document.getElementById('fatBar').style.width = fatPct + '%';
+  }
+</script>
+</body>
+</html>

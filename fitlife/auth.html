@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife — Authentication</title>
+  <meta name="description" content="Access your FitLife account. Login as a user to track your fitness or sign in as admin to manage the system." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow-y: auto;
+    }
+    .auth-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 10% 20%, rgba(34,197,94,0.08) 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, rgba(59,130,246,0.06) 0%, transparent 45%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .auth-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 440px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      animation: fadeUp 0.5s ease-out;
+    }
+    .auth-container:hover {
+      border-color: var(--border-accent);
+      box-shadow: var(--shadow-accent);
+    }
+    .auth-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .auth-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .auth-logo .logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-teal));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem;
+    }
+    .auth-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .auth-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: var(--transition);
+    }
+    .auth-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .auth-form {
+      display: none;
+    }
+    .auth-form.active {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .pw-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .pw-input-wrapper .form-input {
+      width: 100%;
+      padding-right: 48px;
+    }
+    .toggle-pw {
+      position: absolute;
+      right: 14px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      user-select: none;
+    }
+    .toggle-pw:hover {
+      color: var(--text-primary);
+    }
+    .role-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+    .role-option {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-input);
+    }
+    .role-option input {
+      display: none;
+    }
+    .role-option .role-icon {
+      font-size: 1.3rem;
+    }
+    .role-option .role-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .role-option.selected {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+    }
+    .role-option.selected .role-label {
+      color: var(--accent);
+    }
+    .pw-strength {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: -8px;
+    }
+    .pw-strength-bar-bg {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .pw-strength-bar {
+      height: 100%;
+      width: 0;
+      transition: var(--transition);
+    }
+    .pw-strength-text {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-align: right;
+    }
+    .auth-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .remember-me input {
+      accent-color: var(--accent);
+    }
+    .forgot-link {
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+    .btn-submit {
+      width: 100%;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    .back-home {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 24px;
+      transition: var(--transition);
+    }
+    .back-home:hover {
+      color: var(--accent);
+    }
+    .theme-toggle-corner {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="auth-bg"></div>
+
+<!-- Theme toggle in upper corner -->
+<div class="theme-toggle-corner">
+  <button class="theme-toggle" title="Toggle Theme">🌙</button>
+</div>
+
+<div class="auth-container">
+  <div class="auth-header">
+    <a href="index.html" class="auth-logo">
+      <div class="logo-icon">💪</div>
+      <span>Fit<span class="text-accent">Life</span></span>
+    </a>
+    <p class="auth-subtitle">Track, analyze, and master your wellness journey.</p>
+    <p class="auth-welcome" id="authWelcome">Sign in with your FitLife account to continue.</p>
+  </div>
+
+  <div class="auth-tabs">
+    <div class="auth-tab active" data-target="loginForm">Sign In</div>
+    <div class="auth-tab" data-target="registerForm">Log In</div>
+  </div>
+
+  <!-- LOGIN FORM -->
+  <form id="loginForm" class="auth-form active">
+    <div class="form-group">
+      <label class="form-label" for="loginEmail">Email Address</label>
+      <input type="email" id="loginEmail" class="form-input" placeholder="name@example.com" required />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="loginPassword">Password</label>
+      <div class="pw-input-wrapper">
+        <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required />
+        <button type="button" class="toggle-pw" aria-label="Toggle password visibility">👁</button>
+      </div>
+    </div>
+
+    <!-- Role Selector -->
+    <div class="form-group">
+      <label class="form-label">Sign in as</label>
+      <div class="role-selector">
+        <label class="role-option selected" id="roleUserLabel">
+          <input type="radio" name="role" value="user" checked />
+          <span class="role-icon">👤</span>
+          <span class="role-label">User / Member</span>
+        </label>
+        <label class="role-option" id="roleAdminLabel">
+          <input type="radio" name="role" value="admin" />
+          <span class="role-icon">🛡️</span>
+          <span class="role-label">Administrator</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="auth-actions">
+      <label class="remember-me">
+        <input type="checkbox" id="rememberMe" /> Remember me
+      </label>
+      <a href="#" class="forgot-link" onclick="showToast('Password reset link sent! ✉️', 'info')">Forgot Password?</a>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-submit">Sign In →</button>
+  </form>
+
+  <!-- REGISTER FORM -->
+  <form id="registerForm" class="auth-form">
+    <div class="form-group">
+      <label class="form-label" for="regName">Full Name</label>
+      <input type="text" id="regName" class="form-input" placeholder="Alex Kumar" required />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="regEmail">Email Address</label>
+      <input type="email" id="regEmail" class="form-input" placeholder="name@example.com" required />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="regPassword">Password</label>
+      <div class="pw-input-wrapper">
+        <input type="password" id="regPassword" class="form-input" placeholder="Min. 8 characters" required />
+        <button type="button" class="toggle-pw" aria-label="Toggle password visibility">👁</button>
+      </div>
+    </div>
+
+    <!-- Password Strength Indicator -->
+    <div class="pw-strength">
+      <div class="pw-strength-bar-bg">
+        <div id="strengthBar" class="pw-strength-bar"></div>
+      </div>
+      <div id="strengthText" class="pw-strength-text"></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="regConfirm">Confirm Password</label>
+      <div class="pw-input-wrapper">
+        <input type="password" id="regConfirm" class="form-input" placeholder="••••••••" required />
+        <button type="button" class="toggle-pw" aria-label="Toggle password visibility">👁</button>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-submit">Create Account →</button>
+  </form>
+
+  <a href="index.html" class="back-home">← Back to Landing Page</a>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  // Add direct interactivity for role radio cards on auth.html
+  const roleOptions = document.querySelectorAll('.role-option');
+  roleOptions.forEach(opt => {
+    opt.addEventListener('click', function() {
+      roleOptions.forEach(o => o.classList.remove('selected'));
+      this.classList.add('selected');
+      const radio = this.querySelector('input[type="radio"]');
+      if (radio) radio.checked = true;
+    });
+  });
+</script>
+</body>
+</html>

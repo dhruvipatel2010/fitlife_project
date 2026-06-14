@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitLife — Reports Generation</title>
+  <meta name="description" content="Generate administrative fitness reports, membership growth logs, active status analysis, and export data." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <style>
+    .reports-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 24px;
+    }
+    .compiling-overlay {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    @media (max-width: 1024px) {
+      .reports-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+  
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="sidebar-logo">
+        <div class="logo-icon" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">🛡️</div>
+        <span>Fit<span class="text-accent">Admin</span></span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Management</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Admin Dashboard</span>
+      </a>
+      <a href="users.html" class="nav-item">
+        <span class="nav-icon">👥</span>
+        <span>User Management</span>
+      </a>
+      <a href="reports.html" class="nav-item active">
+        <span class="nav-icon">📄</span>
+        <span>Fitness Reports</span>
+      </a>
+      
+      <div class="sidebar-section-label">Communications</div>
+      <a href="notifications.html" class="nav-item">
+        <span class="nav-icon">🔔</span>
+        <span>Reminders & Alerts</span>
+      </a>
+      <a href="feedback.html" class="nav-item">
+        <span class="nav-icon">💬</span>
+        <span>Feedback Forms</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-mini">
+        <div class="user-avatar" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">AD</div>
+        <div class="user-mini-info">
+          <div class="user-mini-name">Admin User</div>
+          <div class="user-mini-role">Administrator</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
+      <div class="topbar-left">
+        <h1 class="topbar-title">Fitness Reports Generation</h1>
+        <p class="topbar-subtitle">Compile membership signup trends, user activities, and feedback digests.</p>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle icon-btn" title="Toggle Theme">🌙</button>
+        <button class="icon-btn" onclick="showToast('Exporting engine is ready.', 'info')">
+          📄
+        </button>
+        <div class="topbar-avatar" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">AD</div>
+      </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      
+      <div class="reports-layout">
+        
+        <!-- Left Column: Report Builder -->
+        <div>
+          <div class="card">
+            <h3 class="chart-title mb-16">Generate New System Report</h3>
+            
+            <form id="reportForm" style="display:flex;flex-direction:column;gap:16px;">
+              <div class="form-group">
+                <label class="form-label" for="repType">Report Category</label>
+                <select id="repType" class="form-select" required>
+                  <option value="Membership Growth">Membership Signup Growth</option>
+                  <option value="Activity Logs Analysis">Daily Activity Logs Summary</option>
+                  <option value="Calorie Burn/Cons Balance">Caloric Balance History</option>
+                  <option value="AI Coach Aura Session Stats">AI Coach Aura Sessions Log</option>
+                  <option value="Member Feedback Digest">User Feedback Summaries</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="repStart">Start Date</label>
+                <input type="date" id="repStart" class="form-input" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="repEnd">End Date</label>
+                <input type="date" id="repEnd" class="form-input" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="repFormat">File Format</label>
+                <select id="repFormat" class="form-select" required>
+                  <option value="PDF">PDF document (.pdf)</option>
+                  <option value="Excel">Excel Spreadsheet (.xlsx)</option>
+                  <option value="CSV">CSV file (.csv)</option>
+                  <option value="JSON">JSON file (.json)</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="justify-content:center;">Compile & Generate Report ⚙️</button>
+            </form>
+
+            <!-- Progress Bar Overlay (Hidden by Default) -->
+            <div class="compiling-overlay" id="compilingOverlay">
+              <div style="font-size:0.85rem;font-weight:600;color:var(--accent);">Compiling database tables...</div>
+              <div class="progress-bar"><div class="progress-fill" id="compileProgress" style="width:0%;"></div></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right Column: Generated History Logs -->
+        <div>
+          <div class="card">
+            <h3 class="chart-title mb-16">Generated Reports Log</h3>
+            <p class="text-secondary mb-16" style="font-size:0.82rem;">Direct links to download compiled administrative datasets.</p>
+            
+            <div style="overflow-x:auto;">
+              <table class="data-table" id="reportsLogTable">
+                <thead>
+                  <tr>
+                    <th>Report Name</th>
+                    <th>Date Range</th>
+                    <th>Format</th>
+                    <th>Generated At</th>
+                    <th>Download Link</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Membership Signup Growth</td>
+                    <td>06/01 - 06/14</td>
+                    <td><span class="badge badge-green">PDF</span></td>
+                    <td>Today, 08:30 AM</td>
+                    <td><a href="#" class="text-accent" style="font-weight:600;" onclick="simulateDownload('membership_growth_0614.pdf')">Download ➔</a></td>
+                  </tr>
+                  <tr>
+                    <td>AI Coach Sessions Log</td>
+                    <td>05/01 - 05/31</td>
+                    <td><span class="badge badge-orange" style="background:rgba(249,115,22,0.12);color:var(--accent-orange)">JSON</span></td>
+                    <td>May 31, 2026</td>
+                    <td><a href="#" class="text-accent" style="font-weight:600;" onclick="simulateDownload('ai_sessions_0531.json')">Download ➔</a></td>
+                  </tr>
+                  <tr>
+                    <td>Caloric Balance History</td>
+                    <td>05/15 - 05/29</td>
+                    <td><span class="badge badge-blue">CSV</span></td>
+                    <td>May 29, 2026</td>
+                    <td><a href="#" class="text-accent" style="font-weight:600;" onclick="simulateDownload('calories_balance_0529.csv')">Download ➔</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/auth-protection.js"></script>
+<script src="../js/main.js"></script>
+<script>
+  AuthProtection.requireAdmin();
+  
+  // Setup date range defaults (past 14 days)
+  const today = new Date();
+  const pastFortnight = new Date();
+  pastFortnight.setDate(today.getDate() - 14);
+
+  document.getElementById('repEnd').value = today.toISOString().split('T')[0];
+  document.getElementById('repStart').value = pastFortnight.toISOString().split('T')[0];
+
+  // Report Generator Form Handling
+  const reportForm = document.getElementById('reportForm');
+  const overlay = document.getElementById('compilingOverlay');
+  const progressBar = document.getElementById('compileProgress');
+  const logTable = document.getElementById('reportsLogTable').querySelector('tbody');
+
+  reportForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const type = document.getElementById('repType').value;
+    const format = document.getElementById('repFormat').value;
+
+    // Show compiler bar
+    overlay.style.display = 'flex';
+    progressBar.style.width = '0%';
+    
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 25;
+      progressBar.style.width = progress + '%';
+      if (progress >= 100) {
+        clearInterval(interval);
+        
+        setTimeout(() => {
+          overlay.style.display = 'none';
+          
+          // Add row to log
+          const newRow = document.createElement('tr');
+          const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const filename = type.toLowerCase().replace(/[^a-z0-9]/g, '_') + '.' + format.toLowerCase();
+
+          newRow.innerHTML = `
+            <td>${type}</td>
+            <td>06/01 - 06/14</td>
+            <td><span class="badge badge-blue">${format}</span></td>
+            <td>Today, ${time}</td>
+            <td><a href="#" class="text-accent" style="font-weight:600;" onclick="simulateDownload('${filename}')">Download ➔</a></td>
+          `;
+
+          logTable.prepend(newRow);
+          showToast('Report generated successfully! 📄');
+          reportForm.reset();
+        }, 300);
+      }
+    }, 400);
+  });
+
+  function simulateDownload(filename) {
+    showToast(`Downloading ${filename} file... 💾`, 'info');
+  }
+</script>
+</body>
+</html>
