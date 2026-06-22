@@ -7,6 +7,7 @@
   <meta name="description" content="Manage your personal details, update fitness attributes, check subscription tier, and configure account security." />
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/dashboard.css" />
+  <link rel="stylesheet" href="../css/breadcrumb.css" />
   <style>
     .profile-layout {
       display: grid;
@@ -140,6 +141,9 @@
       </div>
     </header>
 
+    <!-- BREADCRUMBS -->
+    <nav id="breadcrumb-container" class="breadcrumb-nav"></nav>
+
     <!-- PAGE BODY -->
     <div class="page-body">
       
@@ -266,6 +270,7 @@
 
 <script src="../js/auth-protection.js"></script>
 <script src="../js/main.js"></script>
+<script src="../js/breadcrumb.js"></script>
 <script>
   AuthProtection.requireLogin();
   // Setup Form Handlers

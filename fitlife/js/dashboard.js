@@ -239,19 +239,7 @@ if (nutritionCtx) {
   });
 }
 
-// ── Sidebar toggle (mobile) ──
-const sidebarToggle = document.getElementById('sidebarToggle');
-const sidebar = document.getElementById('sidebar');
-if (sidebarToggle && sidebar) {
-  sidebarToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-  });
-  document.addEventListener('click', e => {
-    if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
-      sidebar.classList.remove('open');
-    }
-  });
-}
+
 
 // ── KPI counter animation ──
 document.querySelectorAll('.kpi-value[data-target]').forEach(el => {

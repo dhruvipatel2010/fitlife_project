@@ -7,6 +7,7 @@
   <meta name="description" content="Access custom workout routines, log your weight sessions, and chat with the simulated FitLife AI Fitness Coach." />
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/dashboard.css" />
+  <link rel="stylesheet" href="../css/breadcrumb.css" />
   <style>
     .workouts-layout {
       display: grid;
@@ -85,6 +86,32 @@
       .log-form-grid {
         grid-template-columns: 1fr;
       }
+    }
+    .badge-yoga {
+      background: rgba(168, 85, 247, 0.12);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .badge-zumba {
+      background: rgba(236, 72, 153, 0.12);
+      color: #f472b6;
+      border: 1px solid rgba(236, 72, 153, 0.25);
+    }
+    .kpi-icon.yoga {
+      background: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+    .kpi-icon.zumba {
+      background: rgba(236, 72, 153, 0.15);
+      color: #f472b6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
     }
   </style>
 </head>
@@ -169,6 +196,9 @@
       </div>
     </header>
 
+    <!-- BREADCRUMBS -->
+    <nav id="breadcrumb-container" class="breadcrumb-nav"></nav>
+
     <!-- PAGE BODY -->
     <div class="page-body">
       
@@ -178,7 +208,17 @@
         <div>
           <h2 class="chart-title mb-16">Recommended Fitness Routines</h2>
           
-          <div class="routine-card">
+          <!-- Category Filter Tabs -->
+          <div class="tab-bar">
+            <button class="tab-item active" data-category="all">All</button>
+            <button class="tab-item" data-category="strength">Strength</button>
+            <button class="tab-item" data-category="cardio">Cardio</button>
+            <button class="tab-item" data-category="power">Power</button>
+            <button class="tab-item" data-category="yoga">Yoga</button>
+            <button class="tab-item" data-category="zumba">Zumba</button>
+          </div>
+          
+          <div class="routine-card" data-category="cardio">
             <div class="kpi-icon green">🔥</div>
             <div class="routine-info">
               <div class="routine-title">HIIT Full Body Burn</div>
@@ -195,7 +235,7 @@
             <button class="btn btn-primary btn-sm" onclick="openWorkoutTimer('HIIT Full Body Burn', 1500)">Start →</button>
           </div>
 
-          <div class="routine-card">
+          <div class="routine-card" data-category="strength">
             <div class="kpi-icon blue">💪</div>
             <div class="routine-info">
               <div class="routine-title">Push Day (Chest & Shoulders)</div>
@@ -212,7 +252,7 @@
             <button class="btn btn-primary btn-sm" onclick="openWorkoutTimer('Push Day Strength', 2700)">Start →</button>
           </div>
 
-          <div class="routine-card">
+          <div class="routine-card" data-category="power">
             <div class="kpi-icon orange">🍗</div>
             <div class="routine-info">
               <div class="routine-title">Hypertrophy Legs & Glutes</div>
@@ -227,6 +267,74 @@
               </div>
             </div>
             <button class="btn btn-primary btn-sm" onclick="openWorkoutTimer('Hypertrophy Legs', 3000)">Start →</button>
+          </div>
+
+          <div class="routine-card" data-category="yoga">
+            <div class="kpi-icon yoga">🧘</div>
+            <div class="routine-info">
+              <div class="routine-title">Vinyasa Flow Flexibility</div>
+              <div class="routine-meta">
+                <span class="badge badge-yoga">Yoga</span>
+                <span>⏱ 30 Min</span>
+                <span>🔥 120 kcal</span>
+                <span>⭐ Beginner</span>
+              </div>
+              <div class="routine-exercises">
+                Sun Salutation A (5x), Warrior I & II (3 mins), Tree Pose & Balance (4 mins), Deep Stretch & Savasana (5 mins)
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openWorkoutTimer('Vinyasa Flow Flexibility', 1800)">Start →</button>
+          </div>
+
+          <div class="routine-card" data-category="yoga">
+            <div class="kpi-icon yoga">🧘</div>
+            <div class="routine-info">
+              <div class="routine-title">Power Yoga & Core</div>
+              <div class="routine-meta">
+                <span class="badge badge-yoga">Yoga</span>
+                <span>⏱ 35 Min</span>
+                <span>🔥 180 kcal</span>
+                <span>⭐ Intermediate</span>
+              </div>
+              <div class="routine-exercises">
+                Plank-to-Chaturanga flow (8 mins), Chair Pose holds (5 mins), Boat Pose Core Drill (5 mins), Bridge Pose & Stretch (5 mins)
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openWorkoutTimer('Power Yoga & Core', 2100)">Start →</button>
+          </div>
+
+          <div class="routine-card" data-category="zumba">
+            <div class="kpi-icon zumba">💃</div>
+            <div class="routine-info">
+              <div class="routine-title">Zumba Cardio Dance</div>
+              <div class="routine-meta">
+                <span class="badge badge-zumba">Zumba</span>
+                <span>⏱ 40 Min</span>
+                <span>🔥 380 kcal</span>
+                <span>⭐ Intermediate</span>
+              </div>
+              <div class="routine-exercises">
+                Merengue Warmup (5 mins), Salsa Beat Tempo (10 mins), Reggaeton Core Burn (15 mins), Cool Down & Stretch (5 mins)
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openWorkoutTimer('Zumba Cardio Dance', 2400)">Start →</button>
+          </div>
+
+          <div class="routine-card" data-category="zumba">
+            <div class="kpi-icon zumba">💃</div>
+            <div class="routine-info">
+              <div class="routine-title">Zumba High-Energy Party</div>
+              <div class="routine-meta">
+                <span class="badge badge-zumba">Zumba</span>
+                <span>⏱ 45 Min</span>
+                <span>🔥 450 kcal</span>
+                <span>⭐ Advanced</span>
+              </div>
+              <div class="routine-exercises">
+                Bachata Core Warmup (5 mins), Cumbia Rhythm Dance (12 mins), Electro Dance Beats (18 mins), Dynamic Cool Down (10 mins)
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openWorkoutTimer('Zumba High-Energy Party', 2700)">Start →</button>
           </div>
 
           <!-- Workout Log Form -->
@@ -313,8 +421,9 @@
             <div class="ai-suggestions">
               <button class="ai-suggestion">Chest Workout</button>
               <button class="ai-suggestion">Cardio Routine</button>
+              <button class="ai-suggestion">Yoga Routine</button>
+              <button class="ai-suggestion">Zumba Dance</button>
               <button class="ai-suggestion">Post-workout meal</button>
-              <button class="ai-suggestion">How to lose weight</button>
             </div>
 
             <div class="ai-input-row">
@@ -352,9 +461,27 @@
 <script src="../js/auth-protection.js"></script>
 <script src="../js/main.js"></script>
 <script src="../js/ai-coach.js"></script>
+<script src="../js/breadcrumb.js"></script>
 <script>
   // Require login for this page
   AuthProtection.requireLogin();
+
+  // Category Filtering Logic
+  document.querySelectorAll('.tab-item').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      
+      const category = tab.dataset.category;
+      document.querySelectorAll('.routine-card').forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
 
   // Timer Variable Declarations
   let timerInterval = null;

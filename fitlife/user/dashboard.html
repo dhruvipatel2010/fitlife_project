@@ -7,6 +7,7 @@
   <meta name="description" content="View your daily fitness KPIs, check calorie consumption and macronutrients, log water intake, and track your active workouts." />
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/dashboard.css" />
+  <link rel="stylesheet" href="../css/breadcrumb.css" />
 </head>
 <body>
 
@@ -93,6 +94,9 @@
         <div class="topbar-avatar" onclick="window.location.href='profile.html'">AK</div>
       </div>
     </header>
+
+    <!-- BREADCRUMBS -->
+    <nav id="breadcrumb-container" class="breadcrumb-nav"></nav>
 
     <!-- PAGE BODY -->
     <div class="page-body">
@@ -270,6 +274,7 @@
 <script src="../js/auth-protection.js"></script>
 <script src="../js/main.js"></script>
 <script src="../js/dashboard.js"></script>
+<script src="../js/breadcrumb.js"></script>
 <script>
   // Require login for this page
   AuthProtection.requireLogin();

@@ -57,10 +57,27 @@ const AICoach = {
       • Take progress photos instead of just checking the scale.<br>
       • Remember your "Why".
     `,
+    yoga: `
+      <strong>Vinyasa Flow & Mindfulness:</strong><br>
+      • <strong>Child's Pose:</strong> Hold for 1-2 minutes (breathing deeply)<br>
+      • <strong>Downward Facing Dog:</strong> Pedaling feet to stretch hamstrings (1 minute)<br>
+      • <strong>Sun Salutations (Surya Namaskar):</strong> 3-5 cycles to warm up the entire body<br>
+      • <strong>Warrior I & II:</strong> Holds of 5 deep breaths per side (strengthens legs/core)<br>
+      • <strong>Savasana (Corpse Pose):</strong> Rest completely for 5 minutes at the end.<br>
+      <em>Yoga is excellent for recovery, alignment, and stress reduction!</em>
+    `,
+    zumba: `
+      <strong>High-Energy Zumba Cardio Workout:</strong><br>
+      • <strong>Merengue Warm-up:</strong> Marching in place with Latin hips (4 mins)<br>
+      • <strong>Salsa Step-Touch:</strong> Side steps with active arm circles (5 mins)<br>
+      • <strong>Reggaeton Squat-Drops:</strong> Rhythmic squats to the beat (6 mins)<br>
+      • <strong>Bachata Cool-down:</strong> Slow, fluid hip sways and full-body stretches (4 mins)<br>
+      <em>Tip: Keep moving, feel the rhythm, and don't worry about getting every step perfect!</em>
+    `,
     default: `
       Hello! I am your <strong>FitLife AI Coach</strong>. 🤖<br>
       I can help you with:<br>
-      • Custom workouts (try asking for <em>"chest workout"</em>, <em>"leg workout"</em>, or <em>"cardio routine"</em>)<br>
+      • Custom workouts (try asking for <em>"chest workout"</em>, <em>"leg workout"</em>, <em>"cardio routine"</em>, <em>"yoga routine"</em>, or <em>"zumba dance"</em>)<br>
       • Nutrition advice (ask about <em>"macros"</em> or <em>"post-workout meal"</em>)<br>
       • Weight advice (ask about <em>"weight loss"</em> or <em>"muscle gain"</em>)<br>
       What are your fitness goals today?
@@ -73,6 +90,8 @@ const AICoach = {
     
     if (q.includes('chest') || q.includes('push')) return this.responses.chest;
     if (q.includes('leg') || q.includes('squat') || q.includes('deadlift')) return this.responses.legs;
+    if (q.includes('yoga') || q.includes('stretch') || q.includes('flexibility') || q.includes('mindful') || q.includes('meditat')) return this.responses.yoga;
+    if (q.includes('zumba') || q.includes('dance') || q.includes('rhythm') || q.includes('latin')) return this.responses.zumba;
     if (q.includes('cardio') || q.includes('hiit') || q.includes('run') || q.includes('burn')) return this.responses.cardio;
     if (q.includes('nutrition') || q.includes('protein') || q.includes('macro') || q.includes('diet')) return this.responses.nutrition;
     if (q.includes('weight') || q.includes('lose') || q.includes('fat') || q.includes('bulk') || q.includes('gain')) return this.responses.weight;

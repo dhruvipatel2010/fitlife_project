@@ -7,6 +7,7 @@
   <meta name="description" content="Check your weight trends, body composition, fitness scoring radar, and compute your Body Mass Index (BMI)." />
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/dashboard.css" />
+  <link rel="stylesheet" href="../css/breadcrumb.css" />
   <style>
     .progress-layout {
       display: grid;
@@ -100,6 +101,9 @@
         <div class="topbar-avatar" onclick="window.location.href='profile.html'">AK</div>
       </div>
     </header>
+
+    <!-- BREADCRUMBS -->
+    <nav id="breadcrumb-container" class="breadcrumb-nav"></nav>
 
     <!-- PAGE BODY -->
     <div class="page-body">
@@ -320,9 +324,5 @@
             }
           }
         }
-      });
-    }
-  });
-</script>
-</body>
+});
 </html>

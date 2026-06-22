@@ -145,7 +145,7 @@
 .upgrade-banner p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; }
 
 /* ── Sidebar toggle btn (mobile) ── */
-.sidebar-toggle-btn { display: none; position: fixed; top: 16px; left: 16px; z-index: 200; width: 38px; height: 38px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; }
+.sidebar-toggle-btn { display: none; position: relative; flex-shrink: 0; z-index: 200; width: 38px; height: 38px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; }
 
 /* ── AI Coach Panel ── */
 .ai-panel {

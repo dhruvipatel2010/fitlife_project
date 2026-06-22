@@ -7,6 +7,7 @@
   <meta name="description" content="Manage your long-term fitness and lifestyle targets, add custom goals, and track active completion progress." />
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/dashboard.css" />
+  <link rel="stylesheet" href="../css/breadcrumb.css" />
   <style>
     .goals-grid {
       display: grid;
@@ -115,6 +116,9 @@
         <div class="topbar-avatar" onclick="window.location.href='profile.html'">AK</div>
       </div>
     </header>
+
+    <!-- BREADCRUMBS -->
+    <nav id="breadcrumb-container" class="breadcrumb-nav"></nav>
 
     <!-- PAGE BODY -->
     <div class="page-body">
@@ -348,5 +352,7 @@
     }
   }
 </script>
+
+<script src="../js/breadcrumb.js"></script>
 </body>
 </html>

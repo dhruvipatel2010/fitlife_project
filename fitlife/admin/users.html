@@ -7,6 +7,7 @@
   <meta name="description" content="View list of registered members, search by name or tier, and suspend, delete, or promote accounts." />
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/dashboard.css" />
+  <link rel="stylesheet" href="../css/breadcrumb.css" />
   <style>
     .filter-row {
       display: grid;
@@ -87,6 +88,9 @@
         <div class="topbar-avatar" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">AD</div>
       </div>
     </header>
+
+    <!-- BREADCRUMBS -->
+    <nav id="breadcrumb-container" class="breadcrumb-nav"></nav>
 
     <!-- PAGE BODY -->
     <div class="page-body">
@@ -192,6 +196,7 @@
 
 <script src="../js/auth-protection.js"></script>
 <script src="../js/main.js"></script>
+<script src="../js/breadcrumb.js"></script>
 <script>
   AuthProtection.requireAdmin();
   

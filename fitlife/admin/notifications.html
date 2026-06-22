@@ -7,6 +7,7 @@
   <meta name="description" content="Send system-wide notifications, schedule reminders, target member tiers, and review broadcast histories." />
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/dashboard.css" />
+  <link rel="stylesheet" href="../css/breadcrumb.css" />
   <style>
     .notif-layout {
       display: grid;
@@ -86,6 +87,9 @@
         <div class="topbar-avatar" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">AD</div>
       </div>
     </header>
+
+    <!-- BREADCRUMBS -->
+    <nav id="breadcrumb-container" class="breadcrumb-nav"></nav>
 
     <!-- PAGE BODY -->
     <div class="page-body">
@@ -190,6 +194,7 @@
 
 <script src="../js/auth-protection.js"></script>
 <script src="../js/main.js"></script>
+<script src="../js/breadcrumb.js"></script>
 <script>
   AuthProtection.requireAdmin();
   
