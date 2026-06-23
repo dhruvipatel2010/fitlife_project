@@ -79,9 +79,9 @@
     </nav>
     <div class="sidebar-footer">
       <div class="user-mini" onclick="window.location.href='profile.html'">
-        <div class="user-avatar">AK</div>
+        <div class="user-avatar">??</div>
         <div class="user-mini-info">
-          <div class="user-mini-name">Alex Kumar</div>
+          <div class="user-mini-name">Loading...</div>
           <div class="user-mini-role">Member</div>
         </div>
       </div>
@@ -103,7 +103,7 @@
         <button class="icon-btn" onclick="showToast('Your water level is good today. Keep it up! 💧', 'success')">
           🍎
         </button>
-        <div class="topbar-avatar" onclick="window.location.href='profile.html'">AK</div>
+        <div class="topbar-avatar" onclick="window.location.href='profile.html'">??</div>
       </div>
     </header>
 
@@ -185,21 +185,8 @@
                       <th>Action</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>Breakfast</td>
-                      <td>Oatmeal with berries & honey</td>
-                      <td>380 kcal</td>
-                      <td>12g / 65g / 6g</td>
-                      <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteMeal(this)">Delete</button></td>
-                    </tr>
-                    <tr>
-                      <td>Lunch</td>
-                      <td>Grilled chicken breast & quinoa</td>
-                      <td>650 kcal</td>
-                      <td>45g / 55g / 14g</td>
-                      <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteMeal(this)">Delete</button></td>
-                    </tr>
+                  <tbody id="mealLogBody">
+                    <!-- Loaded dynamically from Store -->
                   </tbody>
                 </table>
               </div>
@@ -261,85 +248,69 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../js/auth-protection.js"></script>
+<script src="../js/store.js"></script>
 <script src="../js/main.js"></script>
 <script src="../js/dashboard.js"></script>
 <script src="../js/breadcrumb.js"></script>
 <script>
   AuthProtection.requireLogin();
-</script>
-<script>
-  // Meal list simulation & reactive macro totals
-  let consumedCal = 1030;
-  let consumedProt = 57;
-  let consumedCarb = 120;
-  let consumedFat = 20;
 
-  const targetCal = 2000;
-  const targetProt = 150;
-  const targetCarb = 250;
-  const targetFat = 65;
+  /* ── Render meal table from Store ── */
+  function renderMeals() {
+    const tbody = document.getElementById('mealLogBody');
+    if (!tbody) return;
+    const meals = Store.getMeals();
+    if (!meals.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:16px;">No meals logged today</td></tr>';
+    } else {
+      tbody.innerHTML = meals.map(m => `
+        <tr>
+          <td>${m.type}</td>
+          <td>${m.food}</td>
+          <td>${m.cal} kcal</td>
+          <td>${m.prot}g / ${m.carb}g / ${m.fat}g</td>
+          <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteMeal(${m.id})">Delete</button></td>
+        </tr>`).join('');
+    }
+    updateMacroDisplay();
+  }
 
-  const mealForm = document.getElementById('mealForm');
-  const mealTable = document.getElementById('mealTable').querySelector('tbody');
+  function deleteMeal(id) {
+    Store.deleteMeal(id);
+    renderMeals();
+    showToast('Meal log deleted', 'info');
+  }
+
+  const mealForm  = document.getElementById('mealForm');
+  const mealTable = document.getElementById('mealTable')?.querySelector('tbody');
 
   mealForm.addEventListener('submit', function(e) {
     e.preventDefault();
     const type = document.getElementById('mealType').value;
     const food = document.getElementById('mealFood').value;
-    const cal = parseInt(document.getElementById('mealCal').value);
+    const cal  = parseInt(document.getElementById('mealCal').value);
     const prot = parseInt(document.getElementById('mealProt').value);
     const carb = parseInt(document.getElementById('mealCarb').value);
-    const fat = parseInt(document.getElementById('mealFat').value);
+    const fat  = parseInt(document.getElementById('mealFat').value);
 
-    // Add to table
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${type}</td>
-      <td>${food}</td>
-      <td>${cal} kcal</td>
-      <td>${prot}g / ${carb}g / ${fat}g</td>
-      <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteMeal(this, ${cal}, ${prot}, ${carb}, ${fat})">Delete</button></td>
-    `;
-    mealTable.appendChild(tr);
-
-    // Update macros
-    consumedCal += cal;
-    consumedProt += prot;
-    consumedCarb += carb;
-    consumedFat += fat;
-
-    updateMacroDisplay();
+    Store.addMeal({ type, food, cal, prot, carb, fat });
+    renderMeals();
     mealForm.reset();
     showToast('Meal logged successfully! 🍎');
   });
 
-  function deleteMeal(btn, cal = 0, prot = 0, carb = 0, fat = 0) {
-    // Deduct
-    if (cal === 0) {
-      // For initial hardcoded rows
-      if (btn.closest('tr').cells[0].textContent === 'Breakfast') {
-        consumedCal -= 380; consumedProt -= 12; consumedCarb -= 65; consumedFat -= 6;
-      } else {
-        consumedCal -= 650; consumedProt -= 45; consumedCarb -= 55; consumedFat -= 14;
-      }
-    } else {
-      consumedCal -= cal;
-      consumedProt -= prot;
-      consumedCarb -= carb;
-      consumedFat -= fat;
-    }
-
-    btn.closest('tr').remove();
-    updateMacroDisplay();
-    showToast('Meal log deleted', 'info');
-  }
-
   function updateMacroDisplay() {
+    const consumedCal  = Store.getTodayCalories();
+    const consumedProt = Store.getTodayProtein();
+    const consumedCarb = Store.getTodayCarbs();
+    const consumedFat  = Store.getTodayFat();
+    const targetCal  = 2000, targetProt = 150, targetCarb = 250, targetFat = 65;
+
     document.getElementById('consumedVal').textContent = consumedCal.toLocaleString();
-    
+
     const calPct = Math.min(Math.round((consumedCal / targetCal) * 100), 100);
     document.getElementById('calPctBar').style.width = calPct + '%';
-    
+
     document.getElementById('protVal').textContent = consumedProt;
     const protPct = Math.min(Math.round((consumedProt / targetProt) * 100), 100);
     document.getElementById('protPct').textContent = protPct + '%';
@@ -355,6 +326,9 @@
     document.getElementById('fatPct').textContent = fatPct + '%';
     document.getElementById('fatBar').style.width = fatPct + '%';
   }
+
+  /* init */
+  renderMeals();
 </script>
 </body>
 </html>

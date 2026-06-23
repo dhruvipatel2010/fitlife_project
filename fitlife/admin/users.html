@@ -132,58 +132,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <div style="font-weight:700;">Alex Kumar</div>
-                  <div style="font-size:0.75rem;color:var(--text-muted);">alex.kumar@example.com</div>
-                </td>
-                <td>Jan 12, 2026</td>
-                <td><span class="badge badge-green">Premium Gold</span></td>
-                <td><span class="badge badge-green status-badge">Active</span></td>
-                <td>
-                  <button class="btn btn-ghost btn-sm" onclick="toggleStatus(this)">Suspend</button>
-                  <button class="btn btn-danger btn-sm" onclick="deleteUser(this)">Delete</button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div style="font-weight:700;">Sarah Jenkins</div>
-                  <div style="font-size:0.75rem;color:var(--text-muted);">sarah.j@example.com</div>
-                </td>
-                <td>Feb 20, 2026</td>
-                <td><span class="badge badge-blue">Free Tier</span></td>
-                <td><span class="badge badge-green status-badge">Active</span></td>
-                <td>
-                  <button class="btn btn-ghost btn-sm" onclick="toggleStatus(this)">Suspend</button>
-                  <button class="btn btn-danger btn-sm" onclick="deleteUser(this)">Delete</button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div style="font-weight:700;">Michael Rose</div>
-                  <div style="font-size:0.75rem;color:var(--text-muted);">m.rose@example.com</div>
-                </td>
-                <td>Mar 05, 2026</td>
-                <td><span class="badge badge-blue">Free Tier</span></td>
-                <td><span class="badge badge-red status-badge" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.25);color:var(--accent-red)">Suspended</span></td>
-                <td>
-                  <button class="btn btn-ghost btn-sm" onclick="toggleStatus(this)">Activate</button>
-                  <button class="btn btn-danger btn-sm" onclick="deleteUser(this)">Delete</button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div style="font-weight:700;">Admin User</div>
-                  <div style="font-size:0.75rem;color:var(--text-muted);">admin@fitlife.com</div>
-                </td>
-                <td>Jan 01, 2026</td>
-                <td><span class="badge badge-orange" style="background:rgba(249,115,22,0.12);color:var(--accent-orange);">Administrator</span></td>
-                <td><span class="badge badge-green status-badge">Active</span></td>
-                <td>
-                  <button class="btn btn-ghost btn-sm" disabled style="opacity:0.3;cursor:not-allowed;">Suspend</button>
-                  <button class="btn btn-danger btn-sm" disabled style="opacity:0.3;cursor:not-allowed;">Delete</button>
-                </td>
-              </tr>
+              <!-- Rendered dynamically from Store -->
             </tbody>
           </table>
         </div>
@@ -195,11 +144,62 @@
 </div>
 
 <script src="../js/auth-protection.js"></script>
+<script src="../js/store.js"></script>
 <script src="../js/main.js"></script>
 <script src="../js/breadcrumb.js"></script>
 <script>
   AuthProtection.requireAdmin();
   
+  // Render users on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    renderUsers();
+  });
+
+  function renderUsers() {
+    const tbody = document.querySelector('#usersTable tbody');
+    if (!tbody) return;
+    const users = Store.getUsers();
+    
+    tbody.innerHTML = users.map(user => {
+      const isSelf = user.email === (localStorage.getItem('fitlife-user-email') || 'admin@fitlife.com');
+      const isSuspended = user.status === 'Suspended';
+      
+      let tierBadgeClass = 'badge-blue';
+      let tierStyle = '';
+      if (user.tier === 'Premium Gold') {
+        tierBadgeClass = 'badge-green';
+      } else if (user.tier === 'Administrator') {
+        tierBadgeClass = 'badge-orange';
+        tierStyle = 'background:rgba(249,115,22,0.12);color:var(--accent-orange);';
+      }
+      
+      const statusBadge = isSuspended
+        ? `<span class="badge badge-red status-badge" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.25);color:var(--accent-red)">Suspended</span>`
+        : `<span class="badge badge-green status-badge">Active</span>`;
+         
+      const actionButtons = isSelf
+        ? `<button class="btn btn-ghost btn-sm" disabled style="opacity:0.3;cursor:not-allowed;">Suspend</button>
+           <button class="btn btn-danger btn-sm" disabled style="opacity:0.3;cursor:not-allowed;">Delete</button>`
+        : `<button class="btn btn-ghost btn-sm" onclick="toggleUserStatus('${user.email}', '${user.status}')">${isSuspended ? 'Activate' : 'Suspend'}</button>
+           <button class="btn btn-danger btn-sm" onclick="deleteUserAccount('${user.email}')">Delete</button>`;
+            
+      return `
+        <tr>
+          <td>
+            <div style="font-weight:700;">${user.name}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">${user.email}</div>
+          </td>
+          <td>${user.registeredDate}</td>
+          <td><span class="badge ${tierBadgeClass}" style="${tierStyle}">${user.tier}</span></td>
+          <td>${statusBadge}</td>
+          <td>${actionButtons}</td>
+        </tr>
+      `;
+    }).join('');
+    
+    filterUsers();
+  }
+
   // Filter Table function
   function filterUsers() {
     const searchVal = document.getElementById('userSearch').value.toLowerCase();
@@ -226,36 +226,20 @@
     }
   }
 
-  // Toggle user active / suspended status
-  function toggleStatus(btn) {
-    const row = btn.closest('tr');
-    const statusBadge = row.querySelector('.status-badge');
-    const isCurrentlyActive = statusBadge.textContent.trim() === 'Active';
-
-    if (isCurrentlyActive) {
-      statusBadge.textContent = 'Suspended';
-      statusBadge.style.background = 'rgba(239,68,68,0.1)';
-      statusBadge.style.borderColor = 'rgba(239,68,68,0.25)';
-      statusBadge.style.color = 'var(--accent-red)';
-      btn.textContent = 'Activate';
-      showToast('Account suspended successfully.', 'info');
-    } else {
-      statusBadge.textContent = 'Active';
-      statusBadge.style.background = 'var(--accent-glow)';
-      statusBadge.style.borderColor = 'var(--border-accent)';
-      statusBadge.style.color = 'var(--accent)';
-      btn.textContent = 'Suspend';
-      showToast('Account activated successfully.', 'success');
-    }
-    
-    filterUsers(); // re-filter
+  // Toggle user status
+  function toggleUserStatus(email, currentStatus) {
+    const nextStatus = currentStatus === 'Active' ? 'Suspended' : 'Active';
+    Store.updateUserStatus(email, nextStatus);
+    showToast(nextStatus === 'Suspended' ? 'Account suspended successfully.' : 'Account activated successfully.', nextStatus === 'Suspended' ? 'info' : 'success');
+    renderUsers();
   }
 
-  // Delete User Row
-  function deleteUser(btn) {
+  // Delete User Account
+  function deleteUserAccount(email) {
     if (confirm('Are you sure you want to permanently delete this user account?')) {
-      btn.closest('tr').remove();
+      Store.deleteUser(email);
       showToast('User deleted from database.', 'error');
+      renderUsers();
     }
   }
 </script>

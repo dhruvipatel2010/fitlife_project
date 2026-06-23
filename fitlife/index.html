@@ -273,7 +273,7 @@
       <li><a href="#features">Features</a></li>
       
     </ul>
-    <div class="navbar-actions">
+    <div class="navbar-actions" id="navbarActions">
       <a href="auth.html" class="btn btn-ghost btn-sm">Login</a>
       <a href="auth.html?tab=register" class="btn btn-primary btn-sm">Get Started →</a>
     </div>
@@ -579,6 +579,22 @@
   </div>
 </footer>
 
+<script src="js/store.js"></script>
 <script src="js/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const navbarActions = document.getElementById('navbarActions');
+    if (navbarActions && typeof Store !== 'undefined' && Store.isLoggedIn()) {
+      const user = Store.getUser();
+      const initials = Store.getInitials(user.name || localStorage.getItem('fitlife-user-name') || 'US');
+      const dashboardUrl = user.role === 'admin' ? 'admin/dashboard.html' : 'user/dashboard.html';
+      
+      navbarActions.innerHTML = `
+        <a href="${dashboardUrl}" class="btn btn-ghost btn-sm">Dashboard</a>
+        <a href="user/profile.html" class="topbar-avatar" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg, var(--accent), var(--accent-teal));display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;color:#000;text-decoration:none;margin-left:8px;" title="View Profile">${initials}</a>
+      `;
+    }
+  });
+</script>
 </body>
 </html>

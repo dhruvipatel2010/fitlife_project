@@ -89,9 +89,9 @@
     </nav>
     <div class="sidebar-footer">
       <div class="user-mini" onclick="window.location.href='profile.html'">
-        <div class="user-avatar">AK</div>
+        <div class="user-avatar">??</div>
         <div class="user-mini-info">
-          <div class="user-mini-name">Alex Kumar</div>
+          <div class="user-mini-name">Loading...</div>
           <div class="user-mini-role">Member</div>
         </div>
       </div>
@@ -113,7 +113,7 @@
         <button class="icon-btn" onclick="showToast('You are closer to achieving your weight target! 🎯', 'success')">
           🎯
         </button>
-        <div class="topbar-avatar" onclick="window.location.href='profile.html'">AK</div>
+        <div class="topbar-avatar" onclick="window.location.href='profile.html'">??</div>
       </div>
     </header>
 
@@ -133,46 +133,7 @@
             <p class="text-secondary mb-16" style="font-size:0.82rem;">Monitor and manually log updates below. Click "Increment" to log daily progress.</p>
             
             <div class="goal-list" id="activeGoalsList">
-              
-              <!-- Weight Goal -->
-              <div style="border-bottom: 1px solid var(--border); padding-bottom:16px; margin-bottom:12px;">
-                <div class="goal-header">
-                  <span class="goal-name">Lose Weight (Target: 80.0 kg)</span>
-                  <span class="goal-pct" id="g1-pct">89%</span>
-                </div>
-                <div class="progress-bar"><div class="progress-fill" id="g1-bar" data-width="89"></div></div>
-                <div class="flex-between mt-8">
-                  <span class="goal-sub">Logged: <span id="g1-val">80.8</span> kg · Target: 80.0 kg</span>
-                  <button class="goal-action-btn" onclick="incrementGoal(1, -0.2)">Record -0.2 kg</button>
-                </div>
-              </div>
-
-              <!-- Steps Goal -->
-              <div style="border-bottom: 1px solid var(--border); padding-bottom:16px; margin-bottom:12px;">
-                <div class="goal-header">
-                  <span class="goal-name">Daily Steps Target (Target: 10,000 steps)</span>
-                  <span class="goal-pct" id="g2-pct">72%</span>
-                </div>
-                <div class="progress-bar"><div class="progress-fill blue" id="g2-bar" data-width="72"></div></div>
-                <div class="flex-between mt-8">
-                  <span class="goal-sub">Logged: <span id="g2-val">7,200</span> / 10,000 steps</span>
-                  <button class="goal-action-btn" onclick="incrementGoal(2, 500)">+500 Steps</button>
-                </div>
-              </div>
-
-              <!-- Water Goal -->
-              <div style="border-bottom: 1px solid var(--border); padding-bottom:16px; margin-bottom:12px;">
-                <div class="goal-header">
-                  <span class="goal-name">Water Cups Hydration (Target: 8 cups)</span>
-                  <span class="goal-pct" id="g3-pct">50%</span>
-                </div>
-                <div class="progress-bar"><div class="progress-fill orange" id="g3-bar" data-width="50"></div></div>
-                <div class="flex-between mt-8">
-                  <span class="goal-sub">Logged: <span id="g3-val">4</span> / 8 cups</span>
-                  <button class="goal-action-btn" onclick="incrementGoal(3, 1)">+1 Cup</button>
-                </div>
-              </div>
-
+              <!-- Rendered by JS from Store -->
             </div>
           </div>
 
@@ -253,104 +214,88 @@
 </div>
 
 <script src="../js/auth-protection.js"></script>
+<script src="../js/store.js"></script>
 <script src="../js/main.js"></script>
 <script>
   AuthProtection.requireLogin();
-  // Setup deadline default to next week
+
   const nextWeek = new Date();
   nextWeek.setDate(nextWeek.getDate() + 7);
   const deadlineInput = document.getElementById('gDeadline');
-  if (deadlineInput) {
-    deadlineInput.value = nextWeek.toISOString().split('T')[0];
+  if (deadlineInput) deadlineInput.value = nextWeek.toISOString().split('T')[0];
+
+  /* ── Render all goals from Store ── */
+  function renderGoals() {
+    const list = document.getElementById('activeGoalsList');
+    if (!list) return;
+    const goals = Store.getGoals();
+    list.innerHTML = goals.map(g => {
+      let pct = 0;
+      if (g.isDec) {
+        const start = 85;
+        pct = Math.round(((start - g.current) / (start - g.target)) * 100);
+      } else {
+        pct = Math.round((g.current / g.target) * 100);
+      }
+      pct = Math.min(Math.max(pct, 0), 100);
+      const val = g.isDec ? g.current.toFixed(1) : g.current.toLocaleString();
+      const tgt = g.isDec ? g.target.toFixed(1) : g.target.toLocaleString();
+      const btnLabel = g.isDec ? `Record ${g.step} ${g.unit}` : `+${g.step} ${g.unit}`;
+      return `
+        <div style="border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:12px;">
+          <div class="goal-header">
+            <span class="goal-name">${g.title}</span>
+            <span class="goal-pct">${pct}%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill ${g.color || ''}" style="width:${pct}%"></div></div>
+          <div class="flex-between mt-8">
+            <span class="goal-sub">Logged: ${val} ${g.unit} · Target: ${tgt} ${g.unit}</span>
+            <button class="goal-action-btn" onclick="incrementGoal(${g.id}, ${g.step})">${btnLabel}</button>
+          </div>
+        </div>`;
+    }).join('');
   }
 
-  // Handle new goal submission
-  const goalForm = document.getElementById('newGoalForm');
-  const activeList = document.getElementById('activeGoalsList');
-  let goalIdCounter = 3; // Keep tracking
+  function incrementGoal(id, amt) {
+    const goals = Store.getGoals();
+    const g = goals.find(x => x.id === id);
+    if (!g) return;
+    g.current = parseFloat((g.current + amt).toFixed(2));
+    if (g.isDec && g.current < g.target) g.current = g.target;
+    if (!g.isDec && g.current > g.target) g.current = g.target;
+    Store.saveGoals(goals);
+    renderGoals();
+    let pct = g.isDec ? Math.round(((85 - g.current) / (85 - g.target)) * 100) : Math.round((g.current / g.target) * 100);
+    if (Math.min(Math.max(pct, 0), 100) === 100) showToast('Goal achieved! Awesome work! 🎉', 'success');
+    else showToast('Goal progress updated! 🎯');
+  }
 
+  /* ── New goal form ── */
+  const goalForm = document.getElementById('newGoalForm');
   goalForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    const title = document.getElementById('gTitle').value;
-    const type = document.getElementById('gType').value;
+    const title     = document.getElementById('gTitle').value;
+    const type      = document.getElementById('gType').value;
     const targetVal = parseFloat(document.getElementById('gTargetVal').value);
-    
-    goalIdCounter++;
-    const currentId = goalIdCounter;
-    
-    const div = document.createElement('div');
-    div.style.cssText = 'border-bottom: 1px solid var(--border); padding-bottom:16px; margin-bottom:12px;';
-    
-    let defaultProgress = 0;
-    let labelUnit = type === 'weight' ? 'kg' : type === 'steps' ? 'steps' : type === 'water' ? 'cups' : 'hours';
-    let progressColor = type === 'steps' ? 'blue' : type === 'water' ? 'orange' : type === 'sleep' ? 'purple' : '';
-
-    div.innerHTML = `
-      <div class="goal-header">
-        <span class="goal-name">${title} (Target: ${targetVal} ${labelUnit})</span>
-        <span class="goal-pct" id="g${currentId}-pct">0%</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill ${progressColor}" id="g${currentId}-bar" style="width: 0%"></div></div>
-      <div class="flex-between mt-8">
-        <span class="goal-sub">Logged: <span id="g${currentId}-val">0</span> / ${targetVal} ${labelUnit}</span>
-        <button class="goal-action-btn" onclick="incrementGoal(${currentId}, ${type === 'weight' ? -1 : type === 'water' ? 1 : type === 'steps' ? 1000 : 1})">Record Progress</button>
-      </div>
-    `;
-
-    activeList.appendChild(div);
+    const labelUnit = type === 'weight' ? 'kg' : type === 'steps' ? 'steps' : type === 'water' ? 'cups' : 'hours';
+    const colorMap  = { steps: 'blue', water: 'orange', sleep: 'purple' };
+    const stepMap   = { weight: -1, steps: 1000, water: 1, sleep: 0.5 };
+    Store.addGoal({
+      title, type,
+      target: targetVal,
+      current: type === 'weight' ? targetVal + 5 : 0,
+      isDec: type === 'weight',
+      unit: labelUnit,
+      step: stepMap[type] || 1,
+      color: colorMap[type] || ''
+    });
+    renderGoals();
     goalForm.reset();
+    deadlineInput.value = nextWeek.toISOString().split('T')[0];
     showToast('New goal created! 🎯');
   });
 
-  // Track values for existing goals
-  const goalsData = {
-    1: { val: 80.8, target: 80.0, isDec: true },  // Weight: gets closer by dropping
-    2: { val: 7200, target: 10000, isDec: false },
-    3: { val: 4, target: 8, isDec: false }
-  };
-
-  function incrementGoal(id, amt) {
-    // If not in tracking dictionary yet (created dynamically)
-    if (!goalsData[id]) {
-      const container = document.getElementById(`g${id}-val`).closest('div').querySelector('.goal-header');
-      const targetText = container.querySelector('.goal-name').textContent;
-      const targetMetric = parseFloat(targetText.match(/Target:\s*([\d\.]+)/)[1]);
-      goalsData[id] = { val: 0, target: targetMetric, isDec: amt < 0 };
-    }
-
-    const gd = goalsData[id];
-    gd.val += amt;
-    if (gd.isDec) {
-      if (gd.val < gd.target) gd.val = gd.target;
-    } else {
-      if (gd.val > gd.target) gd.val = gd.target;
-    }
-
-    // Update displays
-    const valText = gd.isDec ? gd.val.toFixed(1) : gd.val.toLocaleString();
-    document.getElementById(`g${id}-val`).textContent = valText;
-
-    // Calculate percentage
-    let pct = 0;
-    if (gd.isDec) {
-      // Weight drop percentage e.g. start from 85 -> 80
-      // simple calculation
-      const startingWeight = 85.0;
-      pct = Math.round(((startingWeight - gd.val) / (startingWeight - gd.target)) * 100);
-    } else {
-      pct = Math.round((gd.val / gd.target) * 100);
-    }
-    pct = Math.min(Math.max(pct, 0), 100);
-
-    document.getElementById(`g${id}-pct`).textContent = pct + '%';
-    document.getElementById(`g${id}-bar`).style.width = pct + '%';
-
-    if (pct === 100) {
-      showToast('Goal achieved! Awesome work! 🎉', 'success');
-    } else {
-      showToast('Goal progress updated! 🎯');
-    }
-  }
+  renderGoals();
 </script>
 
 <script src="../js/breadcrumb.js"></script>

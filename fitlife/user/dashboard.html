@@ -29,7 +29,7 @@
       </a>
       <a href="workouts.html" class="nav-item">
         <span class="nav-icon">💪</span>
-        <span>Workouts & AI</span>
+        <span>Workouts &amp; AI</span>
       </a>
       <a href="nutrition.html" class="nav-item">
         <span class="nav-icon">🍎</span>
@@ -57,14 +57,14 @@
       <div class="sidebar-section-label">Account</div>
       <a href="profile.html" class="nav-item">
         <span class="nav-icon">👤</span>
-        <span>Profile & Settings</span>
+        <span>Profile &amp; Settings</span>
       </a>
     </nav>
     <div class="sidebar-footer">
       <div class="user-mini" onclick="window.location.href='profile.html'">
-        <div class="user-avatar">AK</div>
+        <div class="user-avatar">??</div>
         <div class="user-mini-info">
-          <div class="user-mini-name">Alex Kumar</div>
+          <div class="user-mini-name">Loading...</div>
           <div class="user-mini-role">Member</div>
         </div>
       </div>
@@ -78,7 +78,7 @@
     <header class="topbar">
       <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
       <div class="topbar-left">
-        <h1 class="topbar-title">Welcome Back, Alex! 👋</h1>
+        <h1 class="topbar-title">Welcome Back! 👋</h1>
         <p class="topbar-subtitle">Here's your fitness overview for today.</p>
       </div>
       <div class="topbar-right">
@@ -87,11 +87,11 @@
           <input type="text" placeholder="Search data..." />
         </div>
         <button class="theme-toggle icon-btn" title="Toggle Theme">🌙</button>
-        <button class="icon-btn" onclick="showToast('You have completed 85% of your steps target! 🚶', 'info')">
+        <button class="icon-btn" id="notifBtn">
           🔔
           <span class="notif-dot"></span>
         </button>
-        <div class="topbar-avatar" onclick="window.location.href='profile.html'">AK</div>
+        <div class="topbar-avatar" onclick="window.location.href='profile.html'">??</div>
       </div>
     </header>
 
@@ -106,34 +106,34 @@
         <div class="kpi-card">
           <div class="kpi-top">
             <div class="kpi-icon green">🔥</div>
-            <div class="kpi-change up">↑ 12%</div>
+            <div class="kpi-change up" id="calBurnedChange">↑ 0%</div>
           </div>
-          <div class="kpi-value" data-target="520" data-suffix=" kcal">0 kcal</div>
+          <div class="kpi-value" id="calBurnedKPI">0 kcal</div>
           <div class="kpi-label">Calories Burned Today</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-top">
             <div class="kpi-icon blue">⚡</div>
-            <div class="kpi-change up">↑ 8%</div>
+            <div class="kpi-change up" id="activeMinChange">↑ 0%</div>
           </div>
-          <div class="kpi-value" data-target="78" data-suffix=" min">0 min</div>
+          <div class="kpi-value" id="activeMinKPI">0 min</div>
           <div class="kpi-label">Active Minutes Today</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-top">
             <div class="kpi-icon orange">🏋️</div>
-            <div class="kpi-change up">Perfect</div>
+            <div class="kpi-change up" id="workoutChange">Today</div>
           </div>
-          <div class="kpi-value">4 / 6</div>
-          <div class="kpi-label">Weekly Workouts</div>
+          <div class="kpi-value" id="workoutCountKPI">0</div>
+          <div class="kpi-label">Workouts Logged Today</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-top">
-            <div class="kpi-icon purple">📈</div>
-            <div class="kpi-change down">↓ 1.4%</div>
+            <div class="kpi-icon purple">💧</div>
+            <div class="kpi-change up" id="waterChangeLabel">/ 8 cups</div>
           </div>
-          <div class="kpi-value">22.4</div>
-          <div class="kpi-label">Current BMI (Normal)</div>
+          <div class="kpi-value" id="waterKPI">0</div>
+          <div class="kpi-label">Water Intake Today</div>
         </div>
       </div>
 
@@ -159,7 +159,7 @@
           <div class="chart-header">
             <div>
               <h3 class="chart-title">Macronutrients</h3>
-              <p class="chart-subtitle">Daily target percentage breakdown</p>
+              <p class="chart-subtitle">Today's logged macro breakdown</p>
             </div>
           </div>
           <div style="position: relative; height: 260px;">
@@ -174,19 +174,12 @@
         <div class="card">
           <div class="flex-between mb-16">
             <h3 class="chart-title">Water Intake</h3>
-            <span class="badge badge-blue"><span id="waterDisplay">4</span> / 8 Cups</span>
+            <span class="badge badge-blue"><span id="waterDisplay">0</span> / 8 Cups</span>
           </div>
           <p class="text-secondary" style="font-size:0.8rem;margin-bottom:16px;">Keep yourself hydrated throughout the day.</p>
           
           <div id="waterCups" style="display:flex;justify-content:space-between;gap:8px;margin-bottom:24px;">
-            <div class="water-cup filled" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all 0.3s;">💧</div>
-            <div class="water-cup filled" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all 0.3s;">💧</div>
-            <div class="water-cup filled" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all 0.3s;">💧</div>
-            <div class="water-cup filled" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all 0.3s;">💧</div>
-            <div class="water-cup" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;opacity:0.25;transition:all 0.3s;">💧</div>
-            <div class="water-cup" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;opacity:0.25;transition:all 0.3s;">💧</div>
-            <div class="water-cup" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;opacity:0.25;transition:all 0.3s;">💧</div>
-            <div class="water-cup" style="flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;opacity:0.25;transition:all 0.3s;">💧</div>
+            <!-- Rendered by JS -->
           </div>
           
           <div class="flex-between">
@@ -198,62 +191,16 @@
         <!-- Target Goals -->
         <div class="card">
           <h3 class="chart-title mb-16">Active Target Goals</h3>
-          <div class="goal-list">
-            <div>
-              <div class="goal-header">
-                <span class="goal-name">Lose Weight (Goal 80kg)</span>
-                <span class="goal-pct">89%</span>
-              </div>
-              <div class="progress-bar"><div class="progress-fill" data-width="89"></div></div>
-              <div class="goal-sub">Current: 80.8kg · Target: 80.0kg</div>
-            </div>
-            <div>
-              <div class="goal-header">
-                <span class="goal-name">Calorie Burn (Goal 600 kcal)</span>
-                <span class="goal-pct">86%</span>
-              </div>
-              <div class="progress-bar"><div class="progress-fill orange" data-width="86"></div></div>
-              <div class="goal-sub">Current: 520 kcal · Target: 600 kcal</div>
-            </div>
-            <div>
-              <div class="goal-header">
-                <span class="goal-name">Daily Sleep Target (8 hrs)</span>
-                <span class="goal-pct">75%</span>
-              </div>
-              <div class="progress-bar"><div class="progress-fill purple" data-width="75"></div></div>
-              <div class="goal-sub">Logged: 6 hrs · Target: 8 hrs</div>
-            </div>
+          <div class="goal-list" id="dashGoalList">
+            <!-- Rendered by JS from Store -->
           </div>
         </div>
 
         <!-- Recent Activities -->
         <div class="card">
           <h3 class="chart-title mb-16">Recent Activity Logs</h3>
-          <div class="activity-list">
-            <div class="activity-item">
-              <div class="activity-dot green"></div>
-              <div class="activity-info">
-                <div class="activity-name">Cardio Workout</div>
-                <div class="activity-time">Today, 08:30 AM</div>
-              </div>
-              <div class="activity-val">+320 kcal</div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-dot orange"></div>
-              <div class="activity-info">
-                <div class="activity-name">Post-workout Shake</div>
-                <div class="activity-time">Today, 09:15 AM</div>
-              </div>
-              <div class="activity-val" style="color:var(--accent-orange)">+280 kcal</div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-dot blue"></div>
-              <div class="activity-info">
-                <div class="activity-name">Logged 4 Cups Water</div>
-                <div class="activity-time">Today, 11:00 AM</div>
-              </div>
-              <div class="activity-val" style="color:var(--accent-blue)">1.0 L</div>
-            </div>
+          <div class="activity-list" id="recentActivityList">
+            <!-- Rendered by JS -->
           </div>
         </div>
       </div>
@@ -272,12 +219,165 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../js/auth-protection.js"></script>
+<script src="../js/store.js"></script>
 <script src="../js/main.js"></script>
 <script src="../js/dashboard.js"></script>
 <script src="../js/breadcrumb.js"></script>
 <script>
-  // Require login for this page
   AuthProtection.requireLogin();
+
+  /* ── Notification button ── */
+  document.getElementById('notifBtn')?.addEventListener('click', () => {
+    showToast('You have completed ' + Math.round((Store.getTodayActiveMinutes() / 60) * 100) + '% of your active minute target! 🚶', 'info');
+  });
+
+  /* ── KPI Hydration ── */
+  function hydrateDashboardKPIs() {
+    const burned    = Store.getTodayCaloriesBurned();
+    const active    = Store.getTodayActiveMinutes();
+    const workouts  = Store.getWorkouts().length;
+    const water     = Store.getWater();
+
+    document.getElementById('calBurnedKPI').textContent   = burned + ' kcal';
+    document.getElementById('activeMinKPI').textContent   = active + ' min';
+    document.getElementById('workoutCountKPI').textContent = workouts;
+    document.getElementById('waterKPI').textContent       = water;
+    document.getElementById('waterDisplay').textContent   = water;
+
+    renderWaterCups(water);
+    renderGoals();
+    renderRecentActivity();
+    updateMacroChartFromStore();
+  }
+
+  /* ── Water Cups ── */
+  function renderWaterCups(count) {
+    const container = document.getElementById('waterCups');
+    if (!container) return;
+    container.innerHTML = '';
+    for (let i = 0; i < 8; i++) {
+      const cup = document.createElement('div');
+      cup.className = 'water-cup' + (i < count ? ' filled' : '');
+      cup.style.cssText = 'flex:1;height:45px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all 0.3s;' + (i >= count ? 'opacity:0.25;' : '');
+      cup.textContent = '💧';
+      container.appendChild(cup);
+    }
+  }
+
+  document.querySelectorAll('.water-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const current = Store.getWater();
+      if (btn.dataset.action === 'add' && current < 8) {
+        Store.setWater(current + 1);
+        showToast('Water intake updated! 💧');
+      } else if (btn.dataset.action === 'remove' && current > 0) {
+        Store.setWater(current - 1);
+      }
+      hydrateDashboardKPIs();
+    });
+  });
+
+  /* ── Goals on Dashboard ── */
+  function renderGoals() {
+    const list = document.getElementById('dashGoalList');
+    if (!list) return;
+    const goals = Store.getGoals().slice(0, 3);
+    list.innerHTML = goals.map(g => {
+      let pct = 0;
+      if (g.isDec) {
+        const start = 85;
+        pct = Math.round(((start - g.current) / (start - g.target)) * 100);
+      } else {
+        pct = Math.round((g.current / g.target) * 100);
+      }
+      pct = Math.min(Math.max(pct, 0), 100);
+      const val = g.isDec ? g.current.toFixed(1) : g.current.toLocaleString();
+      const tgt = g.isDec ? g.target.toFixed(1) : g.target.toLocaleString();
+      return `
+        <div>
+          <div class="goal-header">
+            <span class="goal-name">${g.title}</span>
+            <span class="goal-pct">${pct}%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill ${g.color || ''}" style="width:${pct}%"></div></div>
+          <div class="goal-sub">Current: ${val} ${g.unit} · Target: ${tgt} ${g.unit}</div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ── Recent Activity ── */
+  function renderRecentActivity() {
+    const list = document.getElementById('recentActivityList');
+    if (!list) return;
+    const meals    = Store.getMeals().slice(-2);
+    const workouts = Store.getWorkouts().slice(-2);
+    const items    = [];
+
+    workouts.forEach(w => items.push({
+      color: 'green', name: w.name || 'Workout',
+      time: 'Today', val: `+${w.caloriesBurned || 0} kcal`
+    }));
+    meals.forEach(m => items.push({
+      color: 'orange', name: m.food || m.type || 'Meal',
+      time: 'Today', val: `+${m.cal || 0} kcal`, valColor: 'var(--accent-orange)'
+    }));
+
+    if (!items.length) {
+      list.innerHTML = '<p class="text-secondary" style="font-size:0.82rem;">No activity logged today. <a href="workouts.html" style="color:var(--accent);">Start a workout</a> or <a href="nutrition.html" style="color:var(--accent);">log a meal</a>.</p>';
+      return;
+    }
+
+    list.innerHTML = items.map(i => `
+      <div class="activity-item">
+        <div class="activity-dot ${i.color}"></div>
+        <div class="activity-info">
+          <div class="activity-name">${i.name}</div>
+          <div class="activity-time">${i.time}</div>
+        </div>
+        <div class="activity-val" style="${i.valColor ? 'color:' + i.valColor : ''}">${i.val}</div>
+      </div>`).join('');
+  }
+
+  /* ── Update Macro Chart from store ── */
+  let macroChartInstance = null;
+  function updateMacroChartFromStore() {
+    const prot = Store.getTodayProtein();
+    const carb = Store.getTodayCarbs();
+    const fat  = Store.getTodayFat();
+    if (macroChartInstance && (prot + carb + fat) > 0) {
+      macroChartInstance.data.datasets[0].data = [prot, carb, fat];
+      macroChartInstance.update();
+    }
+  }
+
+  /* Intercept macro chart creation to keep reference */
+  document.addEventListener('DOMContentLoaded', () => {
+    const macroCtx = document.getElementById('macroChart');
+    if (macroCtx && typeof Chart !== 'undefined') {
+      macroChartInstance = new Chart(macroCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Protein', 'Carbs', 'Fat'],
+          datasets: [{
+            data: [Store.getTodayProtein() || 35, Store.getTodayCarbs() || 47, Store.getTodayFat() || 18],
+            backgroundColor: ['#22c55e', '#3b82f6', '#f97316'],
+            borderWidth: 0, hoverOffset: 8
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '72%',
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14, font: { size: 11 } } },
+            tooltip: {
+              backgroundColor: '#111827', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, padding: 12,
+              callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}g` }
+            }
+          }
+        }
+      });
+    }
+    hydrateDashboardKPIs();
+  });
 </script>
 </body>
 </html>

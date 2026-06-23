@@ -113,9 +113,9 @@
     </nav>
     <div class="sidebar-footer">
       <div class="user-mini">
-        <div class="user-avatar">AK</div>
+        <div class="user-avatar">??</div>
         <div class="user-mini-info">
-          <div class="user-mini-name">Alex Kumar</div>
+          <div class="user-mini-name">Loading...</div>
           <div class="user-mini-role">Member</div>
         </div>
       </div>
@@ -137,7 +137,7 @@
         <button class="icon-btn" onclick="showToast('Your settings are loaded', 'info')">
           👤
         </button>
-        <div class="topbar-avatar">AK</div>
+        <div class="topbar-avatar">??</div>
       </div>
     </header>
 
@@ -152,9 +152,9 @@
         <!-- Left Side: Mini profile card & Settings links -->
         <div>
           <div class="card profile-card-center mb-24">
-            <div class="profile-large-avatar">AK</div>
-            <div class="profile-name" id="profileCardName">Alex Kumar</div>
-            <div class="profile-email">alex.kumar@example.com</div>
+            <div class="profile-large-avatar">??</div>
+            <div class="profile-name" id="profileCardName">Loading...</div>
+            <div class="profile-email" id="profileCardEmail">...</div>
             <span class="badge badge-green">Premium Gold Member</span>
             
             <div style="margin-top:24px;border-top:1px solid var(--border);padding-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -269,23 +269,32 @@
 </div>
 
 <script src="../js/auth-protection.js"></script>
+<script src="../js/store.js"></script>
 <script src="../js/main.js"></script>
 <script src="../js/breadcrumb.js"></script>
 <script>
   AuthProtection.requireLogin();
-  // Setup Form Handlers
+  /* Store pre-fills all inputs via hydrateAll() already.
+     We just handle form save + logout. */
+
   const infoForm = document.getElementById('infoForm');
   infoForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    
-    // Update local variables & displays
-    const name = document.getElementById('profName').value;
-    const height = document.getElementById('profHeight').value;
-    const weight = document.getElementById('profWeight').value;
+    const name   = document.getElementById('profName').value.trim();
+    const email  = document.getElementById('profEmail').value.trim();
+    const height = parseFloat(document.getElementById('profHeight').value);
+    const weight = parseFloat(document.getElementById('profWeight').value);
+    const dob    = document.getElementById('profDob').value;
 
-    document.getElementById('profileCardName').textContent = name;
+    Store.saveUser({ name, email, height, weight, dob });
+
+    // Update visible elements instantly
+    document.getElementById('profileCardName')?.textContent && (document.getElementById('profileCardName').textContent = name);
+    document.getElementById('profileCardEmail')?.textContent && (document.getElementById('profileCardEmail').textContent = email);
     document.getElementById('profileCardHeight').textContent = height + ' cm';
     document.getElementById('profileCardWeight').textContent = weight + ' kg';
+    document.querySelectorAll('.user-mini-name').forEach(el => el.textContent = name);
+    document.querySelectorAll('.user-avatar, .topbar-avatar, .profile-large-avatar').forEach(el => el.textContent = Store.getInitials(name));
 
     showToast('Personal info updated successfully! 👤');
   });
@@ -293,18 +302,10 @@
   const securityForm = document.getElementById('securityForm');
   securityForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    const newPw = document.getElementById('secNew').value;
+    const newPw  = document.getElementById('secNew').value;
     const confirm = document.getElementById('secConfirm').value;
-
-    if (newPw.length < 8) {
-      showToast('Password must be at least 8 characters long!', 'error');
-      return;
-    }
-    if (newPw !== confirm) {
-      showToast('New passwords do not match!', 'error');
-      return;
-    }
-
+    if (newPw.length < 8) { showToast('Password must be at least 8 characters long!', 'error'); return; }
+    if (newPw !== confirm)  { showToast('New passwords do not match!', 'error'); return; }
     showToast('Password changed successfully! 🔐');
     securityForm.reset();
   });

@@ -168,9 +168,9 @@
     </nav>
     <div class="sidebar-footer">
       <div class="user-mini" onclick="window.location.href='profile.html'">
-        <div class="user-avatar">AK</div>
+        <div class="user-avatar">??</div>
         <div class="user-mini-info">
-          <div class="user-mini-name">Alex Kumar</div>
+          <div class="user-mini-name">Loading...</div>
           <div class="user-mini-role">Member</div>
         </div>
       </div>
@@ -192,7 +192,7 @@
         <button class="icon-btn" onclick="showToast('Your AI Fitness Coach is online and ready!', 'success')">
           🤖 <span class="notif-dot" style="background:var(--accent);"></span>
         </button>
-        <div class="topbar-avatar" onclick="window.location.href='profile.html'">AK</div>
+        <div class="topbar-avatar" onclick="window.location.href='profile.html'">??</div>
       </div>
     </header>
 
@@ -375,21 +375,8 @@
                       <th>Action</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>Flat Bench Press</td>
-                      <td>3</td>
-                      <td>10</td>
-                      <td>65 kg</td>
-                      <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteLog(this)">Delete</button></td>
-                    </tr>
-                    <tr>
-                      <td>Incline DB Press</td>
-                      <td>3</td>
-                      <td>12</td>
-                      <td>22 kg</td>
-                      <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteLog(this)">Delete</button></td>
-                    </tr>
+                  <tbody id="workoutLogBody">
+                    <!-- Loaded dynamically from Store -->
                   </tbody>
                 </table>
               </div>
@@ -459,6 +446,7 @@
 </div>
 
 <script src="../js/auth-protection.js"></script>
+<script src="../js/store.js"></script>
 <script src="../js/main.js"></script>
 <script src="../js/ai-coach.js"></script>
 <script src="../js/breadcrumb.js"></script>
@@ -531,36 +519,59 @@
   function completeWorkout() {
     clearInterval(timerInterval);
     closeModal('timerModal');
-    showToast('Awesome job! Routine logged in activity. 🔥', 'success');
+    const routineName = document.getElementById('timerRoutineTitle').textContent;
+    Store.addWorkout({
+      name: routineName,
+      sets: 1, reps: 1, weight: 0,
+      caloriesBurned: Math.round(remainingSeconds * 0.15),
+      duration: Math.round((1500 - remainingSeconds) / 60) || 25,
+    });
+    renderWorkoutLogs();
+    showToast('Awesome job! Routine logged! 🔥', 'success');
   }
 
-  // Workout logging local persistence simulation
-  const logForm = document.getElementById('workoutLogForm');
-  const logTable = document.getElementById('workoutLogTable').querySelector('tbody');
+  // ── Load stored workout logs ──
+  function renderWorkoutLogs() {
+    const tbody = document.getElementById('workoutLogBody');
+    if (!tbody) return;
+    const logs = Store.getWorkouts();
+    if (!logs.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:16px;">No exercises logged today</td></tr>';
+      return;
+    }
+    tbody.innerHTML = logs.map(w => `
+      <tr>
+        <td>${w.name}</td>
+        <td>${w.sets}</td>
+        <td>${w.reps}</td>
+        <td>${w.weight} kg</td>
+        <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteLog(${w.id})">Delete</button></td>
+      </tr>`).join('');
+  }
+  renderWorkoutLogs();
 
+  // ── Workout log form ──
+  const logForm  = document.getElementById('workoutLogForm');
   logForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    const name = document.getElementById('logExercise').value;
-    const sets = document.getElementById('logSets').value;
-    const reps = document.getElementById('logReps').value;
-    const weight = document.getElementById('logWeight').value;
+    const name   = document.getElementById('logExercise').value;
+    const sets   = parseInt(document.getElementById('logSets').value);
+    const reps   = parseInt(document.getElementById('logReps').value);
+    const weight = parseFloat(document.getElementById('logWeight').value);
 
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${name}</td>
-      <td>${sets}</td>
-      <td>${reps}</td>
-      <td>${weight} kg</td>
-      <td><button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:0.7rem;" onclick="deleteLog(this)">Delete</button></td>
-    `;
-    logTable.appendChild(tr);
-
+    Store.addWorkout({
+      name, sets, reps, weight,
+      caloriesBurned: Math.round(sets * reps * weight * 0.05),
+      duration: Math.round(sets * 3),
+    });
+    renderWorkoutLogs();
     logForm.reset();
     showToast('Exercise log recorded! 🏋️');
   });
 
-  function deleteLog(btn) {
-    btn.closest('tr').remove();
+  function deleteLog(id) {
+    Store.deleteWorkout(id);
+    renderWorkoutLogs();
     showToast('Log removed', 'info');
   }
 </script>

@@ -87,7 +87,7 @@
       <div class="user-mini" onclick="showToast('Admin Profile Settings loading...', 'info')">
         <div class="user-avatar" style="background: linear-gradient(135deg, var(--accent-red), #f43f5e);">AD</div>
         <div class="user-mini-info">
-          <div class="user-mini-name">Admin User</div>
+          <div class="user-mini-name" id="adminSidebarName">Admin User</div>
           <div class="user-mini-role">Administrator</div>
         </div>
       </div>
@@ -253,11 +253,23 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../js/auth-protection.js"></script>
+<script src="../js/store.js"></script>
 <script src="../js/main.js"></script>
 <script src="../js/dashboard.js"></script>
 <script src="../js/breadcrumb.js"></script>
 <script>
   AuthProtection.requireAdmin();
+
+  /* Hydrate admin name */
+  (function() {
+    const user = Store.getUser();
+    const name = user.name || localStorage.getItem('fitlife-user-name') || 'Admin';
+    const initials = Store.getInitials(name);
+    document.querySelectorAll('.user-mini-name').forEach(el => el.textContent = name);
+    document.querySelectorAll('.topbar-avatar').forEach(el => el.textContent = initials);
+    const adminLog = document.querySelector('.activity-list .activity-name');
+    if (adminLog) adminLog.textContent = name + ' logged in';
+  })();
 </script>
 <script>
   // Initialize Signup Growth Chart

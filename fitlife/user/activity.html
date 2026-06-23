@@ -80,9 +80,9 @@
     </nav>
     <div class="sidebar-footer">
       <div class="user-mini" onclick="window.location.href='profile.html'">
-        <div class="user-avatar">AK</div>
+        <div class="user-avatar">??</div>
         <div class="user-mini-info">
-          <div class="user-mini-name">Alex Kumar</div>
+          <div class="user-mini-name">Loading...</div>
           <div class="user-mini-role">Member</div>
         </div>
       </div>
@@ -104,7 +104,7 @@
         <button class="icon-btn" onclick="showToast('Your daily steps are logged!', 'success')">
           🏃
         </button>
-        <div class="topbar-avatar" onclick="window.location.href='profile.html'">AK</div>
+        <div class="topbar-avatar" onclick="window.location.href='profile.html'">??</div>
       </div>
     </header>
 
@@ -219,29 +219,38 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../js/auth-protection.js"></script>
+<script src="../js/store.js"></script>
 <script src="../js/main.js"></script>
 <script src="../js/dashboard.js"></script>
 <script>
   AuthProtection.requireLogin();
-</script>
-<script>
-  // Setup activity form submission
+
+  /* ── Load today's stored activity into the top row ── */
+  (function loadTodayActivity() {
+    const a = Store.getActivity();
+    const el = (id) => document.getElementById(id);
+    if (el('t-steps'))  el('t-steps').textContent  = parseInt(a.steps).toLocaleString();
+    if (el('t-water'))  el('t-water').textContent  = a.water;
+    if (el('t-sleep'))  el('t-sleep').textContent  = parseFloat(a.sleep).toFixed(1);
+    if (el('t-active')) el('t-active').textContent = a.active;
+  })();
+
   const activityForm = document.getElementById('activityForm');
-  
   activityForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    const steps = parseInt(document.getElementById('actSteps').value);
-    const water = parseInt(document.getElementById('actWater').value);
-    const sleep = parseFloat(document.getElementById('actSleep').value).toFixed(1);
+    const steps  = parseInt(document.getElementById('actSteps').value);
+    const water  = parseInt(document.getElementById('actWater').value);
+    const sleep  = parseFloat(document.getElementById('actSleep').value);
     const active = parseInt(document.getElementById('actActive').value);
 
-    // Update today's display row
-    document.getElementById('t-steps').textContent = steps.toLocaleString();
-    document.getElementById('t-water').textContent = water;
-    document.getElementById('t-sleep').textContent = sleep;
+    Store.saveActivity({ steps, water, sleep, active });
+    Store.setWater(water);
+
+    document.getElementById('t-steps').textContent  = steps.toLocaleString();
+    document.getElementById('t-water').textContent  = water;
+    document.getElementById('t-sleep').textContent  = sleep.toFixed(1);
     document.getElementById('t-active').textContent = active;
 
-    // Trigger toast
     showToast('Today\'s activity logs updated successfully! 🏃');
     activityForm.reset();
   });

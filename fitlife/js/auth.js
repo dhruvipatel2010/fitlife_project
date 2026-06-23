@@ -1,5 +1,5 @@
 /* ============================================
-   FitLife — Auth JS
+   FitLife — Auth JS  (uses Store)
    ============================================ */
 
 // ── Tab switching (Login / Register) ──
@@ -22,16 +22,13 @@ if (urlParams.get('tab') === 'register') {
   document.querySelector('.auth-tab[data-target="registerForm"]')?.click();
 }
 
-function getFirstName(fullName) {
-  return fullName ? fullName.trim().split(' ')[0] : '';
-}
-
 function updateAuthGreeting() {
   const authWelcome = document.getElementById('authWelcome');
-  const storedName = localStorage.getItem('fitlife-user-name');
   if (!authWelcome) return;
-  if (storedName) {
-    authWelcome.textContent = `Welcome back, ${getFirstName(storedName)}! Ready to continue?`;
+  const user = Store.getUser();
+  const name = user.name || localStorage.getItem('fitlife-user-name') || '';
+  if (name) {
+    authWelcome.textContent = `Welcome back, ${Store.getFirstName(name)}! Ready to continue?`;
   } else {
     authWelcome.textContent = 'Sign in with your FitLife account to continue.';
   }
@@ -41,23 +38,23 @@ updateAuthGreeting();
 
 // ── Password strength indicator ──
 const passwordInput = document.getElementById('regPassword');
-const strengthBar = document.getElementById('strengthBar');
-const strengthText = document.getElementById('strengthText');
+const strengthBar   = document.getElementById('strengthBar');
+const strengthText  = document.getElementById('strengthText');
 
 if (passwordInput && strengthBar) {
   passwordInput.addEventListener('input', function () {
     const val = this.value;
     let score = 0;
-    if (val.length >= 8) score++;
-    if (/[A-Z]/.test(val)) score++;
-    if (/[0-9]/.test(val)) score++;
+    if (val.length >= 8)           score++;
+    if (/[A-Z]/.test(val))         score++;
+    if (/[0-9]/.test(val))         score++;
     if (/[^A-Za-z0-9]/.test(val)) score++;
 
     const colors = ['', '#ef4444', '#f97316', '#eab308', '#22c55e'];
     const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
     const widths = ['0%', '25%', '50%', '75%', '100%'];
 
-    strengthBar.style.width = widths[score] || '0%';
+    strengthBar.style.width      = widths[score] || '0%';
     strengthBar.style.background = colors[score] || 'transparent';
     if (strengthText) strengthText.textContent = labels[score] || '';
     if (strengthText) strengthText.style.color = colors[score] || '';
@@ -83,7 +80,7 @@ const loginForm = document.getElementById('loginForm');
 if (loginForm) {
   loginForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
+    const email    = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
 
     if (!email || !password) {
@@ -91,29 +88,24 @@ if (loginForm) {
       return;
     }
 
-    // Role selector
     const roleRadio = document.querySelector('input[name="role"]:checked');
-    const role = roleRadio ? roleRadio.value : 'user';
+    const role      = roleRadio ? roleRadio.value : 'user';
 
-    // Simulate login
-    const btn = this.querySelector('button[type="submit"]');
+    const btn     = this.querySelector('button[type="submit"]');
     const oldText = btn.textContent;
     btn.textContent = 'Signing in...';
-    btn.disabled = true;
+    btn.disabled    = true;
 
-    // For demo purposes, store the login credentials
-    localStorage.setItem('fitlife-user-email', email);
-    localStorage.setItem('fitlife-user-name', email.split('@')[0]);
-    localStorage.setItem('fitlife-user-role', role);
+    // Derive name from existing store or email prefix
+    const existing = Store.getUser();
+    const name     = existing.name || email.split('@')[0];
 
-    showToast(`Welcome!`, 'success');
+    Store.saveUser({ name, email, role });
+    Store.registerUser({ name, email, role });
+    showToast(`Welcome back, ${Store.getFirstName(name)}! 👋`, 'success');
 
     setTimeout(() => {
-      if (role === 'admin') {
-        window.location.href = 'admin/dashboard.html';
-      } else {
-        window.location.href = 'user/dashboard.html';
-      }
+      window.location.href = role === 'admin' ? 'admin/dashboard.html' : 'user/dashboard.html';
     }, 1200);
   });
 }
@@ -123,10 +115,10 @@ const registerForm = document.getElementById('registerForm');
 if (registerForm) {
   registerForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    const name = document.getElementById('regName').value;
-    const email = document.getElementById('regEmail').value;
+    const name    = document.getElementById('regName').value.trim();
+    const email   = document.getElementById('regEmail').value.trim();
     const password = document.getElementById('regPassword').value;
-    const confirm = document.getElementById('regConfirm').value;
+    const confirm  = document.getElementById('regConfirm').value;
 
     if (!name || !email || !password || !confirm) {
       showAuthError('Please fill in all fields.');
@@ -141,13 +133,14 @@ if (registerForm) {
       return;
     }
 
-    localStorage.setItem('fitlife-user-name', name);
-    localStorage.setItem('fitlife-user-email', email);
-    localStorage.setItem('fitlife-user-role', 'user');
+    Store.saveUser({ name, email, role: 'user', height: 180, weight: 80.8, dob: '1995-05-15' });
+    Store.registerUser({ name, email, role: 'user' });
 
     const btn = this.querySelector('button[type="submit"]');
     btn.textContent = 'Creating account...';
-    btn.disabled = true;
+    btn.disabled    = true;
+
+    showToast(`Account created! Welcome, ${Store.getFirstName(name)}! 🎉`, 'success');
 
     setTimeout(() => {
       window.location.href = 'user/dashboard.html';

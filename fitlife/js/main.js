@@ -44,11 +44,10 @@ const ThemeManager = {
     const gridColor = theme === 'light' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
     Chart.defaults.color = textColor;
     Chart.defaults.borderColor = gridColor;
-    // Re-render all charts
     Object.values(Chart.instances || {}).forEach(chart => {
       if (chart.options?.scales) {
         Object.values(chart.options.scales).forEach(scale => {
-          if (scale.grid) scale.grid.color = gridColor;
+          if (scale.grid)  scale.grid.color  = gridColor;
           if (scale.ticks) scale.ticks.color = textColor;
         });
       }
@@ -60,33 +59,29 @@ const ThemeManager = {
 // Init theme on every page load FIRST
 ThemeManager.init();
 
-function getFirstName(fullName) {
-  return fullName ? fullName.trim().split(' ')[0] : '';
-}
-
-function getInitials(fullName) {
-  const parts = fullName.trim().split(' ').filter(Boolean);
-  if (!parts.length) return '';
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
-
+// ══════════════════════════════════════
+// USER HYDRATION  (uses Store if available)
+// ══════════════════════════════════════
 function hydrateStoredUser() {
+  // Store.hydrateAll() is already called by store.js on DOMContentLoaded.
+  // This is a lightweight fallback for scripts that load before DOMContentLoaded.
+  if (typeof Store !== 'undefined') return; // store.js will handle it
+
   const name = localStorage.getItem('fitlife-user-name');
   if (!name) return;
 
-  document.querySelectorAll('.user-mini-name').forEach(el => {
-    el.textContent = name;
-  });
+  const parts = name.trim().split(' ').filter(Boolean);
+  const initials = parts.length >= 2
+    ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+    : name.slice(0, 2).toUpperCase();
+
+  document.querySelectorAll('.user-mini-name').forEach(el => el.textContent = name);
+  document.querySelectorAll('.user-avatar, .topbar-avatar').forEach(el => el.textContent = initials);
 
   document.querySelectorAll('.topbar-title').forEach(el => {
-    if (el.textContent.includes('Welcome Back')) {
-      el.textContent = `Welcome Back, ${getFirstName(name)}! 👋`;
+    if (el.textContent.toLowerCase().includes('welcome')) {
+      el.textContent = `Welcome Back, ${parts[0]}! 👋`;
     }
-  });
-
-  document.querySelectorAll('.user-avatar, .topbar-avatar').forEach(el => {
-    el.textContent = getInitials(name);
   });
 
   const profileCard = document.getElementById('profileCardName');
@@ -99,6 +94,18 @@ hydrateStoredUser();
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.theme-toggle').forEach(btn => {
     btn.addEventListener('click', () => ThemeManager.toggle());
+  });
+
+  // ── Logout buttons ──
+  document.querySelectorAll('[data-action="logout"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (typeof Store !== 'undefined') Store.clearSession();
+      else {
+        ['fitlife-user','fitlife-user-name','fitlife-user-email','fitlife-user-role'].forEach(k => localStorage.removeItem(k));
+      }
+      showToast('You have been logged out. See you soon! 👋', 'info');
+      setTimeout(() => { window.location.href = window.location.pathname.includes('/user/') || window.location.pathname.includes('/admin/') ? '../auth.html' : 'auth.html'; }, 1200);
+    });
   });
 });
 
@@ -113,7 +120,7 @@ if (navbar) {
 }
 
 const menuToggle = document.getElementById('menuToggle');
-const navLinks = document.getElementById('navLinks');
+const navLinks   = document.getElementById('navLinks');
 if (menuToggle && navLinks) {
   menuToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
   document.addEventListener('click', e => {
@@ -127,16 +134,16 @@ if (menuToggle && navLinks) {
 // COUNTER ANIMATION
 // ══════════════════════════════════════
 function animateCounter(el) {
-  const target = parseFloat(el.dataset.target);
-  const suffix = el.dataset.suffix || '';
-  const prefix = el.dataset.prefix || '';
+  const target   = parseFloat(el.dataset.target);
+  const suffix   = el.dataset.suffix   || '';
+  const prefix   = el.dataset.prefix   || '';
   const decimals = el.dataset.decimals ? parseInt(el.dataset.decimals) : 0;
   const duration = 1800;
-  const start = performance.now();
+  const start    = performance.now();
   function update(now) {
-    const elapsed = now - start;
+    const elapsed  = now - start;
     const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
+    const eased    = 1 - Math.pow(1 - progress, 3);
     el.textContent = prefix + (eased * target).toFixed(decimals) + suffix;
     if (progress < 1) requestAnimationFrame(update);
   }
@@ -167,13 +174,13 @@ if (revealEls.length) {
   const revObs = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
+        entry.target.style.opacity   = '1';
         entry.target.style.transform = 'translateY(0)';
       }
     });
   }, { threshold: 0.1 });
   revealEls.forEach(el => {
-    el.style.opacity = '0';
+    el.style.opacity   = '0';
     el.style.transform = 'translateY(30px)';
     el.style.transition = 'opacity 0.65s ease, transform 0.65s ease';
     revObs.observe(el);
@@ -193,7 +200,7 @@ window.addEventListener('load', () => {
 // ══════════════════════════════════════
 // MODAL HELPERS
 // ══════════════════════════════════════
-window.openModal = id => document.getElementById(id)?.classList.add('active');
+window.openModal  = id => document.getElementById(id)?.classList.add('active');
 window.closeModal = id => document.getElementById(id)?.classList.remove('active');
 
 document.querySelectorAll('[data-modal]').forEach(btn => {
@@ -216,7 +223,7 @@ window.showToast = function(message, type = 'success') {
   if (existing) existing.remove();
 
   const colors = { success: 'var(--accent)', error: 'var(--accent-red)', info: 'var(--accent-blue)' };
-  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  const icons  = { success: '✅', error: '❌', info: 'ℹ️' };
 
   const toast = document.createElement('div');
   toast.className = 'fitlife-toast';
@@ -232,7 +239,7 @@ window.showToast = function(message, type = 'success') {
   `;
   document.body.appendChild(toast);
   setTimeout(() => {
-    toast.style.opacity = '0';
+    toast.style.opacity    = '0';
     toast.style.transition = 'opacity 0.3s';
     setTimeout(() => toast.remove(), 300);
   }, 3500);
@@ -244,7 +251,7 @@ window.showToast = function(message, type = 'success') {
 document.querySelectorAll('.btn').forEach(btn => {
   btn.addEventListener('click', function(e) {
     const ripple = document.createElement('span');
-    const rect = this.getBoundingClientRect();
+    const rect   = this.getBoundingClientRect();
     ripple.style.cssText = `
       position:absolute; border-radius:50%; pointer-events:none;
       background:rgba(255,255,255,0.25); width:60px; height:60px;
@@ -271,7 +278,7 @@ document.head.appendChild(s);
 // ══════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
   const sidebarToggle = document.getElementById('sidebarToggle');
-  const sidebar = document.getElementById('sidebar');
+  const sidebar       = document.getElementById('sidebar');
   if (sidebarToggle && sidebar) {
     sidebarToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
     document.addEventListener('click', e => {
